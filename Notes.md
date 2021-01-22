@@ -1,0 +1,3 @@
+- Requires sqlserver PowerShell Module
+- Requires DLLs for Blowfish encryption from https://www.codeproject.com/Tips/235342/Blowfish-Encryption-Implementation-in-NET
+    - Default Blowfish key is “Blowfish-CBC”
