@@ -98,9 +98,10 @@ class OpenfireBase
 
     [void] Set()
     {
-        # Nothing to do
+        throw "Set() not Implemented"
     }
 
+    # Compare current state to desired state. Should not be overridden.
     [System.Boolean] Test()
     {
         $isInDesiredState = $true

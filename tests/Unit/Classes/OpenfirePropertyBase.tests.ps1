@@ -7,71 +7,69 @@ $ProjectName = (Get-ChildItem $ProjectPath\*\*.psd1 | Where-Object {
 Import-Module $ProjectName
 
 InModuleScope $ProjectName {
-    Describe OpenfireBase {
-        Context 'OpenfireBase\Constructors' {
+    Describe OpenfirePropertyBase {
+        Context 'OpenfirePropertyBase\Constructors' {
             It 'Should not throw an exception when instantiated' {
-                {[OpenfireBase]::new()} | Should -Not -Throw
+                {[OpenfirePropertyBase]::new()} | Should -Not -Throw
             }
 
             It 'Has a default or empty constructor' {
-                $instance = [OpenfireBase]::new()
+                $instance = [OpenfirePropertyBase]::new()
                 $instance | Should -Not -BeNullOrEmpty
             }
         }
 
-        Context 'OpenfireBase\Type creation' {
-            It 'Should be type named OpenfireBase' {
-                $instance = [OpenfireBase]::new()
-                $instance.GetType().Name | Should -Be 'OpenfireBase'
+        Context 'OpenfirePropertyBase\Type creation' {
+            It 'Should be type named OpenfirePropertyBase' {
+                $instance = [OpenfirePropertyBase]::new()
+                $instance.GetType().Name | Should -Be 'OpenfirePropertyBase'
             }
         }
     }
 
-    Describe 'OpenfireBase\Testing Get Method' -Tag 'Get' {
+    Describe 'OpenfirePropertyBase\Testing Get Method' -Tag 'Get' {
         BeforeAll {
             $script:mockOpenfireHome = 'C:\Program Files\Openfire'
             $script:mockConfigFileName = 'openfire.xml'
         }
 
         BeforeEach {
-            $script:instanceDesiredState = [OpenfireBase]::New()
+            $script:instanceDesiredState = [OpenfirePropertyBase]::New()
             $script:instanceDesiredState.OpenfireHome = $script:mockOpenfireHome
             $script:instanceDesiredState.ConfigFileName = $script:mockConfigFileName
         }
 
         It 'Should return the same values passed' {
-            $currentState = $script:instanceDesiredState.Get()
-            $currentState.OpenfireHome | Should -Be $script:mockOpenfireHome
-            $currentState.ConfigFileName | Should -Be $script:mockConfigFileName
+            { $script:instanceDesiredState.Get() } | Should -Throw -Message "GetCurrentValue() not implemented."
         }
 
     }
 
-    Describe "OpenfireBase\Testing Test Method" -Tag 'Test' {
+    Describe "OpenfirePropertyBase\Testing Test Method" -Tag 'Test' {
         BeforeAll {
             $script:mockOpenfireHome = 'C:\Program Files\Openfire'
             $script:mockConfigFileName = 'openfire.xml'
         }
 
         BeforeEach {
-            $script:instanceDesiredState = [OpenfireBase]::New()
+            $script:instanceDesiredState = [OpenfirePropertyBase]::New()
             $script:instanceDesiredState.OpenfireHome = $script:mockOpenfireHome
             $script:instanceDesiredState.ConfigFileName = $script:mockConfigFileName
         }
 
         It 'Should always return $true' {
-            $script:instanceDesiredState.Test() | Should -BeTrue
+            { $script:instanceDesiredState.Test() } | Should -Throw -Message "GetCurrentValue() not implemented."
         }
     }
 
-    Describe "OpenfireBase\Testing Set Method" -Tag 'Set' {
+    Describe "OpenfirePropertyBase\Testing Set Method" -Tag 'Set' {
         BeforeAll {
             $script:mockOpenfireHome = 'C:\Program Files\Openfire'
             $script:mockConfigFileName = 'openfire.xml'
         }
 
         BeforeEach {
-            $script:instanceDesiredState = [OpenfireBase]::New()
+            $script:instanceDesiredState = [OpenfirePropertyBase]::New()
             $script:instanceDesiredState.OpenfireHome = $script:mockOpenfireHome
             $script:instanceDesiredState.ConfigFileName = $script:mockConfigFileName
         }
@@ -81,24 +79,4 @@ InModuleScope $ProjectName {
         }
     }
 
-    Describe "OpenfireBase\Classloading" {
-        BeforeAll {
-            $script:mockOpenfireHome = 'C:\Program Files\Openfire'
-            $script:mockConfigFileName = 'openfire.xml'
-        }
-
-        BeforeEach {
-            $script:instanceDesiredState = [OpenfireBase]::New()
-            $script:instanceDesiredState.OpenfireHome = $script:mockOpenfireHome
-            $script:instanceDesiredState.ConfigFileName = $script:mockConfigFileName
-        }
-
-        It "Should load the java.lang.String class" {
-            $script:instanceDesiredState.LoadJavaClass('java.lang.String') | Should -Not -BeNullOrEmpty
-        }
-
-        It "Should throw on an invalid class name" {
-            {$script:instanceDesiredState.LoadJavaClass('java.lang.DNE')} | Should -Throw
-        }
-    }
 }

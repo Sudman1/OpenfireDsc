@@ -1,9 +1,10 @@
 <#
     .SYNOPSIS
         The localized resource strings in English (en-US) for the
-        resource OpenfireXmlProperty.
+        resource OpenfireBase.
 #>
 
 ConvertFrom-StringData @'
-    LoadIKVM = Loading IKVM libraries.
+    PropertyInDesiredState = Property '{0}' is in desired state.
+    PropertyNotInDesiredState = Property '{0}' not in desired state. Expected '{1}'. Got '{2}'.
 '@

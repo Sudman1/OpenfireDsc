@@ -7,23 +7,23 @@ $ProjectName = (Get-ChildItem $ProjectPath\*\*.psd1 | Where-Object {
 Import-Module $ProjectName
 
 InModuleScope $ProjectName {
-    Describe DSC_ClassFolder {
+    Describe OpenfireXmlProperty {
         Context 'Constructors' {
-            It 'Should not throw an exception when instanciate it' {
-                {[DSC_ClassFolder]::new()} | Should -Not -Throw
+            It 'Should not throw an exception when instantiated' {
+                {[OpenfireXmlProperty]::new()} | Should -Not -Throw
             }
 
             It 'Has a default or empty constructor' {
-                $instance = [DSC_ClassFolder]::new()
+                $instance = [OpenfireXmlProperty]::new()
                 $instance | Should -Not -BeNullOrEmpty
-                $instance.GetType().Name | Should -Be 'DSC_ClassFolder'
+                $instance.GetType().Name | Should -Be 'OpenfireXmlProperty'
             }
         }
 
         Context 'Type creation' {
-            It 'Should be type named DSC_ClassFolder' {
-                $instance = [DSC_ClassFolder]::new()
-                $instance.GetType().Name | Should -Be 'DSC_ClassFolder'
+            It 'Should be type named OpenfireXmlProperty' {
+                $instance = [OpenfireXmlProperty]::new()
+                $instance.GetType().Name | Should -Be 'OpenfireXmlProperty'
             }
         }
     }
@@ -35,7 +35,7 @@ InModuleScope $ProjectName {
         }
 
         BeforeEach {
-            $script:instanceDesiredState = [DSC_ClassFolder]::New()
+            $script:instanceDesiredState = [OpenfireXmlProperty]::New()
             $script:instanceDesiredState.Path = $script:mockFolderObjectPath
             $script:instanceDesiredState.Ensure = [Ensure]::Present
             $script:instanceDesiredState.ReadOnly = $false
@@ -71,7 +71,7 @@ InModuleScope $ProjectName {
             It 'Should return Reason because the folder is absent' {
                 $getMethodResourceResult = $script:instanceDesiredState.Get()
 
-                $getMethodResourceResult.Reasons.Code | Should -Contain 'DSC_ClassFolder:DSC_ClassFolder:Ensure'
+                $getMethodResourceResult.Reasons.Code | Should -Contain 'OpenfireXmlProperty:OpenfireXmlProperty:Ensure'
             }
         }
 
@@ -141,14 +141,14 @@ InModuleScope $ProjectName {
         Context 'When the system is in the desired state' {
             Context 'When the configuration are absent' {
                 BeforeEach {
-                    $script:instanceDesiredState = [DSC_ClassFolder]::New()
+                    $script:instanceDesiredState = [OpenfireXmlProperty]::New()
                     $script:instanceDesiredState.Path = $script:mockFolderObjectPath
                     $script:instanceDesiredState.Ensure = [Ensure]::Absent
 
                     #Override Get() method
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
                         -Value {
-                            $mockInstanceCurrentState = [DSC_ClassFolder]::New()
+                            $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
                             $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
                             $mockInstanceCurrentState.Ensure = [Ensure]::Absent
 
@@ -163,7 +163,7 @@ InModuleScope $ProjectName {
 
             Context 'When the configuration are present' {
                 BeforeEach {
-                    $script:instanceDesiredState = [DSC_ClassFolder]::New()
+                    $script:instanceDesiredState = [OpenfireXmlProperty]::New()
                     $script:instanceDesiredState.Path = $script:mockFolderObjectPath
                     $script:instanceDesiredState.Ensure = [Ensure]::Present
                     $script:instanceDesiredState.ReadOnly = $true
@@ -171,7 +171,7 @@ InModuleScope $ProjectName {
 
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
                         -Value {
-                            $mockInstanceCurrentState = [DSC_ClassFolder]::New()
+                            $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
                             $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
                             $mockInstanceCurrentState.Ensure = [Ensure]::Present
                             $mockInstanceCurrentState.ReadOnly = $true
@@ -192,14 +192,14 @@ InModuleScope $ProjectName {
         Context 'When the system is not in the desired state' {
             Context 'When the configuration should be absent' {
                 BeforeEach {
-                    $script:instanceDesiredState = [DSC_ClassFolder]::New()
+                    $script:instanceDesiredState = [OpenfireXmlProperty]::New()
                     $script:instanceDesiredState.Path = $script:mockFolderObjectPath
                     $script:instanceDesiredState.Ensure = [Ensure]::Absent
 
                     #Override Get() method
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
                         -Value {
-                            $mockInstanceCurrentState = [DSC_ClassFolder]::New()
+                            $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
                             $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
                             $mockInstanceCurrentState.Ensure = [Ensure]::Present
                             $mockInstanceCurrentState.Reasons += [Reason]@{
@@ -217,7 +217,7 @@ InModuleScope $ProjectName {
 
             Context 'When the configuration should be present' {
                 BeforeEach {
-                    $script:instanceDesiredState = [DSC_ClassFolder]::New()
+                    $script:instanceDesiredState = [OpenfireXmlProperty]::New()
                     $script:instanceDesiredState.Path = $script:mockFolderObjectPath
                     $script:instanceDesiredState.Ensure = [Ensure]::Present
 
@@ -244,7 +244,7 @@ InModuleScope $ProjectName {
                     #Override Get() method
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
                     -Value {
-                        $mockInstanceCurrentState = [DSC_ClassFolder]::New()
+                        $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
                         $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
                         $mockInstanceCurrentState.Ensure = [Ensure]::Absent
                         $mockInstanceCurrentState.Reasons += [Reason]@{
@@ -278,7 +278,7 @@ InModuleScope $ProjectName {
                     #Override Get() method
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
                         -Value {
-                            $mockInstanceCurrentState = [DSC_ClassFolder]::New()
+                            $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
                             $mockInstanceCurrentState.Path = $Path
                             $mockInstanceCurrentState.Ensure = [Ensure]::Present
                             $mockInstanceCurrentState.ReadOnly = $ReadOnly
@@ -338,13 +338,13 @@ InModuleScope $ProjectName {
 
             Context 'When the configuration should be absent' {
                 BeforeAll {
-                    $script:instanceDesiredState = [DSC_ClassFolder]::New()
+                    $script:instanceDesiredState = [OpenfireXmlProperty]::New()
                     $script:instanceDesiredState.Path = $script:mockFolderObjectPath
 
                     #Override Get() method
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
                         -Value {
-                            $mockInstanceCurrentState = [DSC_ClassFolder]::New()
+                            $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
                             $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
                             $mockInstanceCurrentState.Ensure = [Ensure]::Present
                             $mockInstanceCurrentState.Reasons += [Reason]@{
@@ -373,13 +373,13 @@ InModuleScope $ProjectName {
 
             Context 'When the configuration should be present' {
                 BeforeAll {
-                    $script:instanceDesiredState = [DSC_ClassFolder]::New()
+                    $script:instanceDesiredState = [OpenfireXmlProperty]::New()
                     $script:instanceDesiredState.Path = $script:mockFolderObjectPath
 
                     #Override Get() method
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
                         -Value {
-                            $mockInstanceCurrentState = [DSC_ClassFolder]::New()
+                            $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
                             $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
                             $mockInstanceCurrentState.Ensure = [Ensure]::Absent
                             $mockInstanceCurrentState.Reasons += [Reason]@{
@@ -427,7 +427,7 @@ InModuleScope $ProjectName {
 
             Context 'When the configuration is present but has the wrong properties' {
                 BeforeAll {
-                    $script:instanceDesiredState = [DSC_ClassFolder]::New()
+                    $script:instanceDesiredState = [OpenfireXmlProperty]::New()
                     $script:instanceDesiredState.Path = $script:mockFolderObjectPath
                     $script:mockFolderObject = New-Item -Path $script:mockFolderObjectPath -ItemType 'Directory' -Force
 
@@ -483,7 +483,7 @@ InModuleScope $ProjectName {
                     #Override Get() method
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
                         -Value {
-                            $mockInstanceCurrentState = [DSC_ClassFolder]::New()
+                            $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
                             $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
                             $mockInstanceCurrentState.Ensure = [Ensure]::Present
                             $mockInstanceCurrentState.ReadOnly = $ReadOnly
