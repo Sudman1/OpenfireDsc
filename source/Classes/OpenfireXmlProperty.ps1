@@ -1,12 +1,6 @@
-$script:localizedDataClassFolder = Get-LocalizedData -DefaultUICulture en-US -FileName 'DSC_ClassFolder.strings.psd1'
-
 [DscResource()]
 class OpenfireXmlProperty
 {
-    [DscProperty(Key)]
-    [System.String]
-    $OpenfireHome
-
     [DscProperty(Key)]
     [System.String]
     $PropertyName
@@ -16,70 +10,9 @@ class OpenfireXmlProperty
     $Value
 
     [DscProperty()]
-    [System.String]
-    $ConfigFileName = 'openfire.xml'
-
-    [DscProperty()]
     [Ensure]
     $Ensure = 'Present'
 
-    # Hidden property for holding localization strings
-    hidden [System.Collections.Hashtable] $localizedData
-
-    # Hidden method to integrate localized strings from classes up the inheritance stack
-    hidden [void] SetLocalizedData()
-    {
-        # Create a list of the inherited class names
-        $inheritedClasses = @(, $this.GetType().Name)
-        $parentClass = $this.GetType().BaseType
-        while ($parentClass -ne [System.Object])
-        {
-            $inheritedClasses += $parentClass.Name
-            $parentClass = $parentClass.BaseType
-        }
-
-        $this.localizedData = @{}
-
-        foreach ($className in $inheritedClasses)
-        {
-            # Get localized data for the class
-            $localizationFile = "$($className).strings.psd1"
-
-            try
-            {
-                $tmpData = Get-LocalizedData -DefaultUICulture 'en-US' -FileName $localizationFile -ErrorAction Stop
-
-                # Append only previously unspecified keys in the localization data
-                foreach ($key in $tmpData.Keys)
-                {
-                    if (-not $this.localizedData.ContainsKey($key))
-                    {
-                        $this.localizedData[$key] = $tmpData[$key]
-                    }
-                }
-            }
-            catch
-            {
-                if ($_.CategoryInfo.Category.ToString() -eq 'ObjectNotFound')
-                {
-                    Write-Warning $_.Exception.Message
-                }
-                else
-                {
-                    throw $_
-                }
-            }
-        }
-
-        Write-Debug ($this.localizedData | ConvertTo-JSON)
-    }
-
-    # Default constructor sets the $isScoped variable and loads the localization strings
-    OpenfireXmlProperty()
-    {
-        # Import the localization strings.
-        $this.SetLocalizedData()
-    }
 
     # Return an instance representing the current state of the resource.
     [OpenfireXmlProperty] Get()
@@ -118,7 +51,7 @@ class OpenfireXmlProperty
             if ($getMethodResourceResult.Ensure -eq [Ensure]::Absent)
             {
                 Write-Verbose -Message (
-                    $script:localizedDataClassFolder.CreateProperty -f $this.PropertyName, $this.Value
+                    $this.localizedData.CreateProperty -f $this.PropertyName, $this.Value
                 )
 
                 # Creation Routine
@@ -126,7 +59,7 @@ class OpenfireXmlProperty
             else
             {
                 Write-Verbose -Message (
-                    $script:localizedDataClassFolder.SetProperty -f $this.PropertyName, $this.Value
+                    $this.localizedData.SetProperty -f $this.PropertyName, $this.Value
                 )
 
                 # Set Routine
@@ -137,7 +70,7 @@ class OpenfireXmlProperty
             if ($getMethodResourceResult.Ensure -eq 'Present')
             {
                 Write-Verbose -Message (
-                    $script:localizedDataClassFolder.RemoveProperty -f $this.PropertyName
+                    $this.localizedData.RemoveProperty -f $this.PropertyName
                 )
 
                 # Remove Routine

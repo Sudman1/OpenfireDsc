@@ -6,6 +6,8 @@
 CopyPaths:
   - en-US
   - DSCResources
+  - ikvm8
+  - preload.ps1
   # - Modules
 Encoding: UTF8
 VersionedOutputDirectory: true
@@ -34,8 +36,8 @@ BuildWorkflow:
     - Build_Module_ModuleBuilder
     - Build_NestedModules_ModuleBuilder
     - Create_changelog_release_output
-    - Generate_Conceptual_Help
-    - Generate_Wiki_Content
+ #   - Generate_Conceptual_Help
+ #   - Generate_Wiki_Content
 
   pack:
     - build
@@ -127,4 +129,3 @@ DscResource.DocGenerator:
       - '_(.+?)_' # Match Italic (underscore)
       - '\*\*(.+?)\*\*' # Match bold
       - '\*(.+?)\*' # Match Italic (asterisk)
-
