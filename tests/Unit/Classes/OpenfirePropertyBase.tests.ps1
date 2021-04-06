@@ -39,8 +39,8 @@ InModuleScope $ProjectName {
             $script:instanceDesiredState.ConfigFileName = $script:mockConfigFileName
         }
 
-        It 'Should return the same values passed' {
-            { $script:instanceDesiredState.Get() } | Should -Throw -Message "GetCurrentValue() not implemented."
+        It 'Should throw' {
+            { $script:instanceDesiredState.Get() } | Should -Throw -ExpectedMessage ("'{0}' is not implemented. (OB0001)" -f "ReadProperty()")
         }
 
     }
@@ -57,8 +57,8 @@ InModuleScope $ProjectName {
             $script:instanceDesiredState.ConfigFileName = $script:mockConfigFileName
         }
 
-        It 'Should always return $true' {
-            { $script:instanceDesiredState.Test() } | Should -Throw -Message "GetCurrentValue() not implemented."
+        It 'Should throw' {
+            { $script:instanceDesiredState.Test() } | Should -Throw -ExpectedMessage ("'{0}' is not implemented. (OB0001)" -f "ReadProperty()")
         }
     }
 
@@ -75,7 +75,7 @@ InModuleScope $ProjectName {
         }
 
         It 'Should throw' {
-            { $script:instanceDesiredState.Set() } | Should -Throw
+            { $script:instanceDesiredState.Set() } | Should -Throw -ExpectedMessage ("'{0}' is not implemented. (OB0001)" -f "ReadProperty()")
         }
     }
 

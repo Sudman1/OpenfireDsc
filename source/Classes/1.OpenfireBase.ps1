@@ -38,7 +38,7 @@ class OpenfireBase
 
             try
             {
-                $tmpData = Get-LocalizedData -DefaultUICulture 'en-US' -FileName $localizationFile -ErrorAction Stop
+                $tmpData = Get-LocalizedData -DefaultUICulture 'en-US' -FileName $localizationFile -BaseDirectory $PSScriptRoot -ErrorAction Stop
 
                 # Append only previously unspecified keys in the localization data
                 foreach ($key in $tmpData.Keys)

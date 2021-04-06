@@ -1,19 +1,6 @@
 [DscResource()]
-class OpenfireXmlProperty
+class OpenfireXmlProperty : OpenfirePropertyBase
 {
-    [DscProperty(Key)]
-    [System.String]
-    $PropertyName
-
-    [DscProperty(Mandatory)]
-    [System.String]
-    $Value
-
-    [DscProperty()]
-    [Ensure]
-    $Ensure = 'Present'
-
-
     # Return an instance representing the current state of the resource.
     [OpenfireXmlProperty] Get()
     {
@@ -23,38 +10,7 @@ class OpenfireXmlProperty
     # Set the state to match the properties specified in this resource.
     [void] Set()
     {
-        $getMethodResourceResult = $this.Get()
-
-        if ($this.Ensure -eq [Ensure]::Present)
-        {
-            if ($getMethodResourceResult.Ensure -eq [Ensure]::Absent)
-            {
-                Write-Verbose -Message (
-                    $this.localizedData.CreateProperty -f $this.PropertyName, $this.Value
-                )
-
-                # Creation Routine
-            }
-            else
-            {
-                Write-Verbose -Message (
-                    $this.localizedData.SetProperty -f $this.PropertyName, $this.Value
-                )
-
-                # Set Routine
-            }
-        }
-        else
-        {
-            if ($getMethodResourceResult.Ensure -eq 'Present')
-            {
-                Write-Verbose -Message (
-                    $this.localizedData.RemoveProperty -f $this.PropertyName
-                )
-
-                # Remove Routine
-            }
-        }
+        ([OpenfirePropertyBase] $this).Set()
     }
 
     # Compare the current state with the desired state.
@@ -63,8 +19,29 @@ class OpenfireXmlProperty
         return ([OpenfirePropertyBase] $this).Test()
     }
 
-    [System.String] GetCurrentValue()
+    # OVERRIDES
+
+    # Create a new property
+    [void] CreateProperty()
     {
-        return ""
+        throw ($this.localizedData.NotImplemented -f "CreateProperty()")
+    }
+
+    # Read the value of a property
+    [System.String] ReadProperty()
+    {
+        throw ($this.localizedData.NotImplemented -f "ReadProperty()")
+    }
+
+    # Update and existing property
+    [void] UpdateProperty()
+    {
+        throw ($this.localizedData.NotImplemented -f "UpdateProperty()")
+    }
+
+    # remove an existing property
+    [void] DeleteProperty()
+    {
+        throw ($this.localizedData.NotImplemented -f "DeleteProperty()")
     }
 }
