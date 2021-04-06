@@ -24,13 +24,16 @@ class OpenfireXmlProperty : OpenfirePropertyBase
     # Create a new property
     [void] CreateProperty()
     {
-        throw ($this.localizedData.NotImplemented -f "CreateProperty()")
+        $this.initJiveGlobals()
+        Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'setXMLProperty' -Arguments $this.PropertyName, $this.Value
     }
 
     # Read the value of a property
     [System.String] ReadProperty()
     {
-        throw ($this.localizedData.NotImplemented -f "ReadProperty()")
+        $this.initJiveGlobals()
+        $currentValue = Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'getXMLProperty' -Arguments $this.PropertyName
+        return $currentValue
     }
 
     # Update and existing property

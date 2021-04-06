@@ -1,4 +1,4 @@
-$dlls = Get-ChildItem .\ikvm8\lib\ -Filter "*.dll"
+$dlls = Get-ChildItem .\source\ikvm8\lib\ -Filter "*.dll"
 
 foreach ($file in $dlls)
 {
@@ -56,7 +56,7 @@ function Invoke-StaticJavaMethod {
         }
         else
         {
-            $status = $false    
+            $status = $false
         }
 
         $status | Write-Output
@@ -66,13 +66,13 @@ function Invoke-StaticJavaMethod {
 
 # Set Home Directory
 $jiveGlobals.GetType().getmember('setHomeDirectory').Invoke($jiveGlobals, @("C:\Program Files\Openfire"))
-$jiveGlobals.GetType().getmember('getHomeDirectory').Invoke($jiveGlobals, $null)  
+$jiveGlobals.GetType().getmember('getHomeDirectory').Invoke($jiveGlobals, $null)
 
 # Set Config File
 #$jiveGlobals.GetType().getmember('setConfigName').Invoke($jiveGlobals, @("openfire.xml"))
 
 # Get Property
-#$jiveGlobals.GetType().getmember('getProperty')[0].Invoke($jiveGlobals, @("locale")) 
+#$jiveGlobals.GetType().getmember('getProperty')[0].Invoke($jiveGlobals, @("locale"))
 
 $DbConnectionManager = [org.jivesoftware.database.DbConnectionManager]::new()
 $con = Invoke-StaticJavaMethod -InputObject $DbConnectionManager -MethodName "getConnection"

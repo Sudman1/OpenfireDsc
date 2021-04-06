@@ -15,15 +15,16 @@
 #>
 function Invoke-StaticJavaMethod
 {
+    [CmdletBinding()]
     param
     (
         # An instance of a type against which a static method will be called.
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $true)]
         [System.Object]
         $InputObject,
 
         # Case-sensitive name of the method to call.
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $MethodName,
 

@@ -28,6 +28,21 @@ class OpenfirePropertyBase : OpenfireBase
     [Ensure]
     $Ensure = 'Present'
 
+    [object] $jiveGlobals
+
+    [void] initJiveGlobals()
+    {
+        $this.jiveGlobals = $this.LoadJavaClass("org.jivesoftware.util.JiveGlobals").newInstance()
+        Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'setHomeDirectory' -Arguments $this.OpenfireHome
+
+        Write-Verbose "Home Directory: $(Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'getHomeDirectory')"
+
+        if ($null -ne $this.ConfigFileName)
+        {
+            Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'setConfigName' -Arguments $this.ConfigFileName
+        }
+    }
+
     [System.Boolean] isValueRequired()
     {
         return ($this.Ensure -eq 'Present')
@@ -129,7 +144,6 @@ class OpenfirePropertyBase : OpenfireBase
     [void] CreateProperty()
     {
         throw ($this.localizedData.NotImplemented -f "CreateProperty()")
-        $this.jiveGlobals = $this.LoadJavaClass("org.jivesoftware.util.JiveGlobals").newInstance()
 
     }
 
@@ -137,20 +151,17 @@ class OpenfirePropertyBase : OpenfireBase
     [System.String] ReadProperty()
     {
         throw ($this.localizedData.NotImplemented -f "ReadProperty()")
-        $this.jiveGlobals = $this.LoadJavaClass("org.jivesoftware.util.JiveGlobals").newInstance()
     }
 
     # Override in child classes
     [void] UpdateProperty()
     {
         throw ($this.localizedData.NotImplemented -f "UpdateProperty()")
-        $this.jiveGlobals = $this.LoadJavaClass("org.jivesoftware.util.JiveGlobals").newInstance()
     }
 
     # Override in child classes
     [void] DeleteProperty()
     {
         throw ($this.localizedData.NotImplemented -f "DeleteProperty()")
-        $this.jiveGlobals = $this.LoadJavaClass("org.jivesoftware.util.JiveGlobals").newInstance()
     }
 }

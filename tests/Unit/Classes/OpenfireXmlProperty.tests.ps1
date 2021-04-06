@@ -28,6 +28,34 @@ InModuleScope $ProjectName {
         }
     }
 
+    Describe "OpenfireXmlProperty\CRUD functions" {
+        BeforeEach {
+            $script:testInstance = [OpenfireXmlProperty] @{
+                OpenfireHome = 'C:\Program Files\Openfire'
+                PropertyName = 'purple.people'
+                Value = 'eater'
+            }
+        }
+
+        It 'Adds a new XML property value' {
+            $script:testInstance.CreateProperty()
+        }
+
+        It 'Gets an XML Property Value' {
+            $script:testInstance.ReadProperty() | Should -Be $script:testInstance.Value
+        }
+
+        It 'Modifies an existing XML property value' {
+            { $script:testInstance.UpdateProperty() } | Should -Not -Throw
+            $script:testInstance.ReadProperty() | Should -Be $script:testInstance.Value
+        }
+
+        It 'Deletes an existing XML property value' {
+            { $script:testInstance.UpdateProperty() } | Should -Not -Throw
+            $script:testInstance.ReadProperty() | Should -BeNullOrEmpty
+        }
+    }
+
     Describe "Testing Get Method" -Tag 'Get' {
         BeforeAll {
             $script:mockFolderObjectPath = Join-Path -Path $TestDrive -ChildPath 'FolderTest'
