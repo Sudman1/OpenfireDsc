@@ -10,53 +10,48 @@ InModuleScope $ProjectName {
 
     Describe 'Helper function Invoke-StaticJavaMethod' {
         BeforeAll {
-            # Load the IKVM library
-
             # Get an object against which to call methods
-            $javaObj
+            $openfireJarPath = "C:\Program Files\Openfire\lib\xmppserver-4.6.2.jar"
+            $jarFileObj = [java.io.File]::new($openfireJarPath)
+            $url = [java.net.URL]::new($jarFileObj.toURI().toURL())
+            $urlArray = [java.net.URL[]]::new(1)
+            $urlArray[0] = $url
+            $currentCl = [java.lang.Thread]::currentThread().getContextClassLoader()
+            $urlCl = [java.net.URLClassloader]::newInstance($urlArray, $currentCl)
+            $jiveGlobalsClass = $urlCl.loadClass("org.jivesoftware.util.JiveGlobals")
+            $script:jiveGlobals = $jiveGlobalsClass.newInstance()
         }
 
-        Context 'Calling a method with 0 arguments' {
+        Context 'Invoke-StaticJavaMethod\Calling a method with 0 arguments' {
 
             It 'Should not Throw' {
-                {Invoke-StaticJavaMethod -InputObject $javaObj -MethodName "method" } | Should -Not -Throw
+                {Invoke-StaticJavaMethod -InputObject $script:jiveGlobals -MethodName 'getLocale' } | Should -Not -Throw
             }
 
             It 'Should return the correct value' {
-                Invoke-StaticJavaMethod -InputObject $javaObj -MethodName "method" | Should -Be "value"
+                Invoke-StaticJavaMethod -InputObject $script:jiveGlobals -MethodName 'getLocale' | Should -Be 'en_US'
             }
         }
 
-        Context 'Calling a method with 1 argument' {
+        Context 'Invoke-StaticJavaMethod\Calling a method with 1 argument' {
 
             It 'Should not Throw' {
-                {Invoke-StaticJavaMethod -InputObject $javaObj -MethodName "method" } | Should -Not -Throw
+                {Invoke-StaticJavaMethod -InputObject $script:jiveGlobals -MethodName 'getXMLProperty' -Arguments 'does.not.exist' } | Should -Not -Throw
             }
 
             It 'Should return the correct value' {
-                Invoke-StaticJavaMethod -InputObject $javaObj -MethodName "method" | Should -Be "value"
+                Invoke-StaticJavaMethod -InputObject $script:jiveGlobals -MethodName 'getXMLProperty' -Arguments 'does.not.exist' | Should -BeNullOrEmpty
             }
         }
 
-        Context 'Calling a method overload with 1 argument' {
+        Context 'Invoke-StaticJavaMethod\Calling a method with more than 1 argument' {
 
             It 'Should not Throw' {
-                {Invoke-StaticJavaMethod -InputObject $javaObj -MethodName "method" } | Should -Not -Throw
+                {Invoke-StaticJavaMethod -InputObject $script:jiveGlobals -MethodName 'getXMLProperty' -Arguments 'does.not.exist', 'nothing to see here' } | Should -Not -Throw
             }
 
             It 'Should return the correct value' {
-                Invoke-StaticJavaMethod -InputObject $javaObj -MethodName "method" | Should -Be "value"
-            }
-        }
-
-        Context 'Calling a method with More than 1 arguments' {
-
-            It 'Should not Throw' {
-                {Invoke-StaticJavaMethod -InputObject $javaObj -MethodName "method" } | Should -Not -Throw
-            }
-
-            It 'Should return the correct value' {
-                Invoke-StaticJavaMethod -InputObject $javaObj -MethodName "method" | Should -Be "value"
+                Invoke-StaticJavaMethod -InputObject $script:jiveGlobals -MethodName 'getXMLProperty' -Arguments 'does.not.exist', 'nothing to see here' | Should -Be 'nothing to see here'
             }
         }
     }

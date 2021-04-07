@@ -10,22 +10,10 @@ InModuleScope $ProjectName {
 
     Describe 'Helper function ConvertTo-HashtableFromObject' {
         BeforeAll {
-            $mockAttribute = 'ReadOnly'
-            $script:mockFolderObjectPath = Join-Path -Path $TestDrive -ChildPath 'FolderTest'
-            $script:mockFolderObject = New-Item -Path $script:mockFolderObjectPath -ItemType 'Directory' -Force
-            $script:mockFolderObject.Attributes = [System.IO.FileAttributes]::$mockAttribute
-        }
-
-        BeforeEach{
-            $script:instance = [DSC_ClassFolder]::new()
-            $script:instance.Path = $script:mockFolderObjectPath
-            $script:instance.Ensure = [Ensure]::Present
+            $script:instance = Get-Date
         }
 
         Context 'When instance of class is convert to hashtable' {
-            BeforeEach {
-
-            }
             It 'Should not Throw' {
                 {$script:convertHashtable = $script:instance | ConvertTo-HashtableFromObject} | Should -Not -Throw
             }
