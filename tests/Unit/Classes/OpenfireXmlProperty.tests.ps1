@@ -51,7 +51,7 @@ InModuleScope $ProjectName {
         }
 
         It 'Deletes an existing XML property value' {
-            { $script:testInstance.UpdateProperty() } | Should -Not -Throw
+            { $script:testInstance.DeleteProperty() } | Should -Not -Throw
             $script:testInstance.ReadProperty() | Should -BeNullOrEmpty
         }
     }

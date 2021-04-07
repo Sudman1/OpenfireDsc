@@ -39,12 +39,14 @@ class OpenfireXmlProperty : OpenfirePropertyBase
     # Update and existing property
     [void] UpdateProperty()
     {
-        throw ($this.localizedData.NotImplemented -f "UpdateProperty()")
+        # Updates and creation follow the same pattern
+        $this.CreateProperty()
     }
 
     # remove an existing property
     [void] DeleteProperty()
     {
-        throw ($this.localizedData.NotImplemented -f "DeleteProperty()")
+        $this.initJiveGlobals()
+        Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'deleteXMLProperty' -Arguments $this.PropertyName
     }
 }
