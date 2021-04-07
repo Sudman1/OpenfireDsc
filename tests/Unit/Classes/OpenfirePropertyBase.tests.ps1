@@ -27,23 +27,45 @@ InModuleScope $ProjectName {
         }
 
         Context 'OpenfirePropertyBase\Type creation' {
+            BeforeEach {
+                $script:instanceDesiredState = [OpenfirePropertyBase] @{
+                    OpenfireHome = 'C:\Program Files\Openfire'
+                    PropertyName = 'purple.people'
+                    Value        = 'eater'
+                    Ensure       = 'Present'
+                }
+            }
+
             It 'Should be type named OpenfirePropertyBase' {
-                $instance = [OpenfirePropertyBase]::new()
-                $instance.GetType().Name | Should -Be 'OpenfirePropertyBase'
+                $script:instanceDesiredState.GetType().Name | Should -Be 'OpenfirePropertyBase'
+            }
+
+            It 'Should throw calling CreateProperty()' {
+                { $script:instanceDesiredState.CreateProperty() } | Should -Throw -ExpectedMessage "'CreateProperty()' is not implemented. (OB0001)"
+            }
+
+            It 'Should throw calling ReadProperty()' {
+                { $script:instanceDesiredState.ReadProperty() } | Should -Throw -ExpectedMessage "'ReadProperty()' is not implemented. (OB0001)"
+            }
+
+            It 'Should throw calling UpdateProperty()' {
+                { $script:instanceDesiredState.UpdateProperty() } | Should -Throw -ExpectedMessage "'UpdateProperty()' is not implemented. (OB0001)"
+            }
+
+            It 'Should throw calling DeleteProperty()' {
+                { $script:instanceDesiredState.DeleteProperty() } | Should -Throw -ExpectedMessage "'DeleteProperty()' is not implemented. (OB0001)"
             }
         }
     }
 
     Describe 'OpenfirePropertyBase\Testing Get Method' -Tag 'Get' {
-        BeforeAll {
-            $script:mockOpenfireHome = 'C:\Program Files\Openfire'
-            $script:mockConfigFileName = 'openfire.xml'
-        }
-
         BeforeEach {
-            $script:instanceDesiredState = [OpenfirePropertyBase]::New()
-            $script:instanceDesiredState.OpenfireHome = $script:mockOpenfireHome
-            $script:instanceDesiredState.ConfigFileName = $script:mockConfigFileName
+            $script:instanceDesiredState = [OpenfirePropertyBase] @{
+                OpenfireHome = 'C:\Program Files\Openfire'
+                PropertyName = 'purple.people'
+                Value        = 'eater'
+                Ensure       = 'Present'
+            }
         }
 
         It 'Should throw' {
@@ -53,37 +75,70 @@ InModuleScope $ProjectName {
     }
 
     Describe "OpenfirePropertyBase\Testing Test Method" -Tag 'Test' {
-        BeforeAll {
-            $script:mockOpenfireHome = 'C:\Program Files\Openfire'
-            $script:mockConfigFileName = 'openfire.xml'
-        }
-
         BeforeEach {
-            $script:instanceDesiredState = [OpenfirePropertyBase]::New()
-            $script:instanceDesiredState.OpenfireHome = $script:mockOpenfireHome
-            $script:instanceDesiredState.ConfigFileName = $script:mockConfigFileName
+            $script:instanceDesiredState = [OpenfirePropertyBase] @{
+                OpenfireHome   = 'C:\Program Files\Openfire'
+                ConfigFileName = 'openfire.xml'
+                PropertyName   = 'purple.people'
+                Value          = 'eater'
+                Ensure         = 'Present'
+            }
+
+            # Return the value requested
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name ReadProperty -Value {
+                Write-Verbose "Mock value '$($script:instanceDesiredState.Value)' for ReadProperty() called."
+                $script:instanceDesiredState.Value
+            } -Force
+
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name UpdateProperty -Value {
+                Write-Verbose "Mock value for CreateProperty() called."
+            } -Force
+
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name CreateProperty -Value {
+                Write-Verbose "Mock value for CreateProperty() called."
+            } -Force
+
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name DeleteProperty -Value {
+                Write-Verbose "Mock value for DeleteProperty() called."
+            } -Force
         }
 
         It 'Should throw' {
-            { $script:instanceDesiredState.Test() } | Should -Throw -ExpectedMessage ("'{0}' is not implemented. (OB0001)" -f "ReadProperty()")
+            { $script:instanceDesiredState.Test() } | Should -Not -Throw
         }
     }
 
     Describe "OpenfirePropertyBase\Testing Set Method" -Tag 'Set' {
-        BeforeAll {
-            $script:mockOpenfireHome = 'C:\Program Files\Openfire'
-            $script:mockConfigFileName = 'openfire.xml'
-        }
 
         BeforeEach {
-            $script:instanceDesiredState = [OpenfirePropertyBase]::New()
-            $script:instanceDesiredState.OpenfireHome = $script:mockOpenfireHome
-            $script:instanceDesiredState.ConfigFileName = $script:mockConfigFileName
+            $script:instanceDesiredState = [OpenfirePropertyBase] @{
+                OpenfireHome = 'C:\Program Files\Openfire'
+                PropertyName = 'purple.people'
+                Value        = 'eater'
+                Ensure       = 'Present'
+            }
+
+            # Return the value requested
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name ReadProperty -Value {
+                Write-Verbose "Mock value '$($script:instanceDesiredState.Value)' for ReadProperty() called."
+                $script:instanceDesiredState.Value
+            } -Force
+
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name UpdateProperty -Value {
+                Write-Verbose "Mock value for CreateProperty() called."
+            } -Force
+
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name CreateProperty -Value {
+                Write-Verbose "Mock value for CreateProperty() called."
+            } -Force
+
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name DeleteProperty -Value {
+                Write-Verbose "Mock value for DeleteProperty() called."
+            } -Force
         }
 
         It 'Should throw' {
-            { $script:instanceDesiredState.Set() } | Should -Throw -ExpectedMessage ("'{0}' is not implemented. (OB0001)" -f "ReadProperty()")
+            { $script:instanceDesiredState.Set() } | Should -Not -Throw
         }
     }
-
 }

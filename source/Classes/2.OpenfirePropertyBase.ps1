@@ -43,18 +43,19 @@ class OpenfirePropertyBase : OpenfireBase
         }
     }
 
-    [System.Boolean] isValueRequired()
+    [void] assertRequiredValueProvided()
     {
-        return ($this.Ensure -eq 'Present')
+        if ($this.Ensure -eq [Ensure]::Present -and -not $this.Value)
+        {
+            throw $this.localizedData.ValueRequiredNotSupplied -f $this.PropertyName
+        }
     }
 
     # Return an instance representing the current state of the resource. Should not be overridden.
     [OpenfirePropertyBase] Get()
     {
-        if (-not $this.isValueRequired())
-        {
-            throw $this.localizedData.ValueRequiredNotSupplied -f $this.PropertyName
-        }
+        # Ensure value is provided if the 'Ensure' value is 'Present'
+        $this.assertRequiredValueProvided()
 
         Write-Verbose -Message (
             $this.localizedData.GetProperty -f $this.PropertyName
@@ -89,10 +90,8 @@ class OpenfirePropertyBase : OpenfireBase
     # Return an instance representing the current state of the resource.
     [void] Set()
     {
-        if (-not $this.isValueRequired())
-        {
-            throw $this.localizedData.ValueRequiredNotSupplied -f $this.PropertyName
-        }
+        # Ensure value is provided if the 'Ensure' value is 'Present'
+        $this.assertRequiredValueProvided()
 
         $getMethodResourceResult = $this.Get()
 
@@ -134,10 +133,8 @@ class OpenfirePropertyBase : OpenfireBase
     # Return an instance representing the current state of the resource.
     [System.Boolean] Test()
     {
-        if (-not $this.isValueRequired())
-        {
-            throw $this.localizedData.ValueRequiredNotSupplied -f $this.PropertyName
-        }
+        # Ensure value is provided if the 'Ensure' value is 'Present'
+        $this.assertRequiredValueProvided()
 
         return ([OpenfireBase] $this).Test()
     }
