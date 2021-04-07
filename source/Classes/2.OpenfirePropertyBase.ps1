@@ -28,7 +28,7 @@ class OpenfirePropertyBase : OpenfireBase
     [Ensure]
     $Ensure = 'Present'
 
-    [object] $jiveGlobals
+    hidden [object] $jiveGlobals
 
     [void] initJiveGlobals()
     {
@@ -62,9 +62,11 @@ class OpenfirePropertyBase : OpenfireBase
 
         <#
             Create an object of the correct type (i.e.: the subclassed resource type)
-            and set its values to those specified in the object, but set Ensure to Absent
+            and set its values to those specified in the object.
         #>
         $currentState = [System.Activator]::CreateInstance($this.GetType())
+        $currentState.OpenfireHome = $this.OpenfireHome
+        $currentState.ConfigFileName = $this.ConfigFileName
         $currentState.PropertyName = $this.PropertyName
 
         # Get the value

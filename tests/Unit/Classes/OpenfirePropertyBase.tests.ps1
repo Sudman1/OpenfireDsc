@@ -1,8 +1,15 @@
 $ProjectPath = "$PSScriptRoot\..\..\.." | Convert-Path
 $ProjectName = (Get-ChildItem $ProjectPath\*\*.psd1 | Where-Object {
         ($_.Directory.Name -match 'source|src' -or $_.Directory.Name -eq $_.BaseName) -and
-        $(try { Test-ModuleManifest $_.FullName -ErrorAction Stop }catch{$false}) }
-    ).BaseName
+        $(try
+            {
+                Test-ModuleManifest $_.FullName -ErrorAction Stop
+            }
+            catch
+            {
+                $false
+            }) }
+).BaseName
 
 Import-Module $ProjectName
 
@@ -10,7 +17,7 @@ InModuleScope $ProjectName {
     Describe OpenfirePropertyBase {
         Context 'OpenfirePropertyBase\Constructors' {
             It 'Should not throw an exception when instantiated' {
-                {[OpenfirePropertyBase]::new()} | Should -Not -Throw
+                { [OpenfirePropertyBase]::new() } | Should -Not -Throw
             }
 
             It 'Has a default or empty constructor' {

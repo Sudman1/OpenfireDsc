@@ -1,8 +1,15 @@
 $ProjectPath = "$PSScriptRoot\..\..\.." | Convert-Path
 $ProjectName = (Get-ChildItem $ProjectPath\*\*.psd1 | Where-Object {
         ($_.Directory.Name -match 'source|src' -or $_.Directory.Name -eq $_.BaseName) -and
-        $(try { Test-ModuleManifest $_.FullName -ErrorAction Stop }catch{$false}) }
-    ).BaseName
+        $(try
+            {
+                Test-ModuleManifest $_.FullName -ErrorAction Stop
+            }
+            catch
+            {
+                $false
+            }) }
+).BaseName
 
 Import-Module $ProjectName
 
@@ -10,7 +17,7 @@ InModuleScope $ProjectName {
     Describe OpenfireXmlProperty {
         Context 'Constructors' {
             It 'Should not throw an exception when instantiated' {
-                {[OpenfireXmlProperty]::new()} | Should -Not -Throw
+                { [OpenfireXmlProperty]::new() } | Should -Not -Throw
             }
 
             It 'Has a default or empty constructor' {
@@ -33,7 +40,7 @@ InModuleScope $ProjectName {
             $script:testInstance = [OpenfireXmlProperty] @{
                 OpenfireHome = 'C:\Program Files\Openfire'
                 PropertyName = 'purple.people'
-                Value = 'eater'
+                Value        = 'eater'
             }
         }
 
@@ -56,110 +63,74 @@ InModuleScope $ProjectName {
         }
     }
 
-    Describe "Testing Get Method" -Tag 'Get' {
-        BeforeAll {
-            $script:mockFolderObjectPath = Join-Path -Path $TestDrive -ChildPath 'FolderTest'
-            $script:mockFolderObject = New-Item -Path $script:mockFolderObjectPath -ItemType 'Directory' -Force
-        }
-
+    Describe "OpenfireXmlProperty\Get Method" -Tag 'Get' {
         BeforeEach {
-            $script:instanceDesiredState = [OpenfireXmlProperty]::New()
-            $script:instanceDesiredState.Path = $script:mockFolderObjectPath
-            $script:instanceDesiredState.Ensure = [Ensure]::Present
-            $script:instanceDesiredState.ReadOnly = $false
+            $script:instanceDesiredState = [OpenfireXmlProperty] @{
+                OpenfireHome = 'C:\Program Files\Openfire'
+                PropertyName = 'purple.people'
+                Value        = 'eater'
+                Ensure       = 'Present'
+            }
+
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name CreateProperty -Value {
+                Write-Verbose "Mock value for CreateProperty() called."
+            } -Force
+
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name DeleteProperty -Value {
+                Write-Verbose "Mock value for DeleteProperty() called."
+            } -Force
+
         }
 
-        Context "When the configuration is absent" {
-            BeforeAll {
-                Mock -CommandName Get-Item -MockWith {
-                    return $null
-                } -Verifiable
+        Context "OpenfireXmlProperty\Get\When the configuration is absent" {
+            BeforeEach {
+                # return an empty value to signify an incorrect value
+                $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name ReadProperty -Value {
+                    Write-Verbose "Mock value '' for ReadProperty() called."
+                    ""
+                } -Force
             }
 
             It 'Should return the state as absent' {
                 $script:instanceDesiredState.Get().Ensure | Should -Be 'Absent'
-                Assert-MockCalled Get-Item -Exactly -Times 1 -Scope It
             }
 
             It 'Should return the same values as present in properties' {
                 $getMethodResourceResult = $script:instanceDesiredState.Get()
 
-                $getMethodResourceResult.Path | Should -Be $script:instanceDesiredState.Path
-                $getMethodResourceResult.ReadOnly | Should -Be $script:instanceDesiredState.ReadOnly
-            }
-
-            It 'Should return $false or $null respectively for the rest of the properties' {
-                $getMethodResourceResult = $script:instanceDesiredState.Get()
-
-                $getMethodResourceResult.Hidden | Should -Be $false
-                $getMethodResourceResult.Shared | Should -Be $false
-                $getMethodResourceResult.SharedName | Should -BeNullOrEmpty
-            }
-
-            It 'Should return Reason because the folder is absent' {
-                $getMethodResourceResult = $script:instanceDesiredState.Get()
-
-                $getMethodResourceResult.Reasons.Code | Should -Contain 'OpenfireXmlProperty:OpenfireXmlProperty:Ensure'
+                $getMethodResourceResult.OpenfireHome | Should -Be $script:instanceDesiredState.OpenfireHome
+                $getMethodResourceResult.ConfigFileName | Should -Be $script:instanceDesiredState.ConfigFileName
+                $getMethodResourceResult.PropertyName | Should -Be $script:instanceDesiredState.PropertyName
+                $getMethodResourceResult.Value | Should -Be $script:instanceDesiredState.Value
             }
         }
 
-        Context "When the configuration is present" {
-            BeforeAll {
-                Mock -CommandName Get-Item -MockWith {
-                    return $script:mockFolderObject
-                }
-            }
-
+        Context "OpenfireXmlProperty\Get\When the configuration is present" {
             BeforeEach {
-                Mock -CommandName Get-SmbShare -MockWith {
-                    return @{
-                        Path = $Shared
-                    }
-                }
+                # Return the value requested
+                $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name ReadProperty -Value {
+                    Write-Verbose "Mock value '$($script:instanceDesiredState.Value)' for ReadProperty() called."
+                    $script:instanceDesiredState.Value
+                } -Force
             }
-
-            $testCase = @(
-                @{
-                    Shared = $false
-                },
-                @{
-                    Shared = $true
-                }
-            )
 
             It 'Should return the state as present' {
                 $script:instanceDesiredState.Get().Ensure | Should -Be 'Present'
-
-                Assert-MockCalled Get-Item -Exactly -Times 1 -Scope It
             }
 
             It 'Should return the same values as present in properties' {
                 $getMethodResourceResult = $script:instanceDesiredState.Get()
 
-                $getMethodResourceResult.Path | Should -Be $script:instanceDesiredState.Path
-                $getMethodResourceResult.ReadOnly | Should -Be $script:instanceDesiredState.ReadOnly
-            }
-
-            It 'Should return the correct values when Shared is <Shared>' -TestCases $testCase {
-                param
-                (
-                    [System.Boolean]
-                    $Shared
-                )
-
-                $getMethodResourceResult = $script:instanceDesiredState.Get()
-
-                $getMethodResourceResult.Shared | Should -Be $Shared
-                $getMethodResourceResult.ReadOnly | Should -Be $script:instanceDesiredState.ReadOnly
-
-                Assert-MockCalled Get-Item -Exactly -Times 1 -Scope It
-                Assert-MockCalled Get-SmbShare -Exactly -Times 1 -Scope It
+                $getMethodResourceResult.OpenfireHome | Should -Be $script:instanceDesiredState.OpenfireHome
+                $getMethodResourceResult.ConfigFileName | Should -Be $script:instanceDesiredState.ConfigFileName
+                $getMethodResourceResult.PropertyName | Should -Be $script:instanceDesiredState.PropertyName
+                $getMethodResourceResult.Value | Should -Be $script:instanceDesiredState.Value
             }
         }
 
     }
 
-    Describe "Testing Test Method" -Tag 'Test' {
+    Describe "OpenfireXmlProperty\Test Method" -Tag 'Test' {
         BeforeAll {
             $script:mockFolderObjectPath = Join-Path -Path $TestDrive -ChildPath 'FolderTest'
             $script:mockFolderObject = New-Item -Path $script:mockFolderObjectPath -ItemType 'Directory' -Force
@@ -176,12 +147,12 @@ InModuleScope $ProjectName {
                     #Override Get() method
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
                         -Value {
-                            $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
-                            $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
-                            $mockInstanceCurrentState.Ensure = [Ensure]::Absent
+                        $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
+                        $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
+                        $mockInstanceCurrentState.Ensure = [Ensure]::Absent
 
-                            return $mockInstanceCurrentState
-                        }
+                        return $mockInstanceCurrentState
+                    }
                 }
 
                 It 'Should return $true' {
@@ -199,16 +170,16 @@ InModuleScope $ProjectName {
 
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
                         -Value {
-                            $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
-                            $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
-                            $mockInstanceCurrentState.Ensure = [Ensure]::Present
-                            $mockInstanceCurrentState.ReadOnly = $true
-                            $mockInstanceCurrentState.Hidden = $true
-                            $mockInstanceCurrentState.Shared = $true
-                            $mockInstanceCurrentState.ShareName = 'TestShare'
+                        $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
+                        $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
+                        $mockInstanceCurrentState.Ensure = [Ensure]::Present
+                        $mockInstanceCurrentState.ReadOnly = $true
+                        $mockInstanceCurrentState.Hidden = $true
+                        $mockInstanceCurrentState.Shared = $true
+                        $mockInstanceCurrentState.ShareName = 'TestShare'
 
-                            return $mockInstanceCurrentState
-                        }
+                        return $mockInstanceCurrentState
+                    }
                 }
 
                 It 'Should return $true' {
@@ -227,16 +198,16 @@ InModuleScope $ProjectName {
                     #Override Get() method
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
                         -Value {
-                            $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
-                            $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
-                            $mockInstanceCurrentState.Ensure = [Ensure]::Present
-                            $mockInstanceCurrentState.Reasons += [Reason]@{
-                                Code = '{0}:{0}:Ensure' -f $this.GetType()
-                                Phrase = ''
-                            }
-
-                            return $mockInstanceCurrentState
+                        $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
+                        $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
+                        $mockInstanceCurrentState.Ensure = [Ensure]::Present
+                        $mockInstanceCurrentState.Reasons += [Reason]@{
+                            Code   = '{0}:{0}:Ensure' -f $this.GetType()
+                            Phrase = ''
                         }
+
+                        return $mockInstanceCurrentState
+                    }
                 }
                 It 'Should return $false' {
                     $script:instanceDesiredState.Test() | Should -BeFalse
@@ -271,12 +242,12 @@ InModuleScope $ProjectName {
                 It 'Should return $false' {
                     #Override Get() method
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
-                    -Value {
+                        -Value {
                         $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
                         $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
                         $mockInstanceCurrentState.Ensure = [Ensure]::Absent
                         $mockInstanceCurrentState.Reasons += [Reason]@{
-                            Code = '{0}:{0}:Ensure' -f $this.GetType()
+                            Code   = '{0}:{0}:Ensure' -f $this.GetType()
                             Phrase = ''
                         }
 
@@ -306,31 +277,31 @@ InModuleScope $ProjectName {
                     #Override Get() method
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
                         -Value {
-                            $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
-                            $mockInstanceCurrentState.Path = $Path
-                            $mockInstanceCurrentState.Ensure = [Ensure]::Present
-                            $mockInstanceCurrentState.ReadOnly = $ReadOnly
-                            $mockInstanceCurrentState.Hidden = $Hidden
-                            $mockInstanceCurrentState.Shared = $Shared
-                            $mockInstanceCurrentState.ShareName = $ShareName
+                        $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
+                        $mockInstanceCurrentState.Path = $Path
+                        $mockInstanceCurrentState.Ensure = [Ensure]::Present
+                        $mockInstanceCurrentState.ReadOnly = $ReadOnly
+                        $mockInstanceCurrentState.Hidden = $Hidden
+                        $mockInstanceCurrentState.Shared = $Shared
+                        $mockInstanceCurrentState.ShareName = $ShareName
 
-                            if ($this.ReadOnly -ne $ReadOnly)
-                            {
-                                $mockInstanceCurrentState.Reasons += [Reason]@{
-                                    Code = '{0}:{0}:ReadOnly' -f $this.GetType()
-                                    Phrase = ''
-                                }
+                        if ($this.ReadOnly -ne $ReadOnly)
+                        {
+                            $mockInstanceCurrentState.Reasons += [Reason]@{
+                                Code   = '{0}:{0}:ReadOnly' -f $this.GetType()
+                                Phrase = ''
                             }
-                            if ($this.Hidden -ne $Hidden)
-                            {
-                                $mockInstanceCurrentState.Reasons += [Reason]@{
-                                    Code = '{0}:{0}:Hidden' -f $this.GetType()
-                                    Phrase = ''
-                                }
-                            }
-
-                            return $mockInstanceCurrentState
                         }
+                        if ($this.Hidden -ne $Hidden)
+                        {
+                            $mockInstanceCurrentState.Reasons += [Reason]@{
+                                Code   = '{0}:{0}:Hidden' -f $this.GetType()
+                                Phrase = ''
+                            }
+                        }
+
+                        return $mockInstanceCurrentState
+                    }
 
                     $script:instanceDesiredState.Path = $Path
                     $script:instanceDesiredState.ReadOnly = $false
@@ -342,7 +313,7 @@ InModuleScope $ProjectName {
         }
     }
 
-    Describe "Testing Set Method" -Tag 'Set' {
+    Describe "OpenfireXmlProperty\Set Method" -Tag 'Set' {
         BeforeAll {
             $script:mockFolderObjectPath = Join-Path -Path $TestDrive -ChildPath 'FolderTest'
             $script:mockFolderObject = New-Item -Path $script:mockFolderObjectPath -ItemType 'Directory' -Force
@@ -372,16 +343,16 @@ InModuleScope $ProjectName {
                     #Override Get() method
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
                         -Value {
-                            $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
-                            $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
-                            $mockInstanceCurrentState.Ensure = [Ensure]::Present
-                            $mockInstanceCurrentState.Reasons += [Reason]@{
-                                Code = '{0}:{0}:Ensure' -f $this.GetType()
-                                Phrase = ''
-                            }
-
-                            return $mockInstanceCurrentState
+                        $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
+                        $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
+                        $mockInstanceCurrentState.Ensure = [Ensure]::Present
+                        $mockInstanceCurrentState.Reasons += [Reason]@{
+                            Code   = '{0}:{0}:Ensure' -f $this.GetType()
+                            Phrase = ''
                         }
+
+                        return $mockInstanceCurrentState
+                    }
 
                     Mock -CommandName Remove-Item -ParameterFilter {
                         $Path -eq $script:instanceDesiredState.Path
@@ -407,16 +378,16 @@ InModuleScope $ProjectName {
                     #Override Get() method
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
                         -Value {
-                            $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
-                            $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
-                            $mockInstanceCurrentState.Ensure = [Ensure]::Absent
-                            $mockInstanceCurrentState.Reasons += [Reason]@{
-                                Code = '{0}:{0}:Ensure' -f $this.GetType()
-                                Phrase = ''
-                            }
-
-                            return $mockInstanceCurrentState
+                        $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
+                        $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
+                        $mockInstanceCurrentState.Ensure = [Ensure]::Absent
+                        $mockInstanceCurrentState.Reasons += [Reason]@{
+                            Code   = '{0}:{0}:Ensure' -f $this.GetType()
+                            Phrase = ''
                         }
+
+                        return $mockInstanceCurrentState
+                    }
 
                     $script:mockFolderObject = New-Item -Path $script:mockFolderObjectPath -ItemType 'Directory' -Force
 
@@ -511,30 +482,30 @@ InModuleScope $ProjectName {
                     #Override Get() method
                     $script:instanceDesiredState | Add-Member -Force -MemberType ScriptMethod -Name Get `
                         -Value {
-                            $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
-                            $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
-                            $mockInstanceCurrentState.Ensure = [Ensure]::Present
-                            $mockInstanceCurrentState.ReadOnly = $ReadOnly
-                            $mockInstanceCurrentState.Hidden = $Hidden
-                            $mockInstanceCurrentState.Shared = $Shared
-                            $mockInstanceCurrentState.ShareName = $ShareName
-                            if ($this.ReadOnly -ne $ReadOnly)
-                            {
-                                $mockInstanceCurrentState.Reasons += [Reason]@{
-                                    Code = '{0}:{0}:ReadOnly' -f $this.GetType()
-                                    Phrase = ''
-                                }
+                        $mockInstanceCurrentState = [OpenfireXmlProperty]::New()
+                        $mockInstanceCurrentState.Path = $script:mockFolderObjectPath
+                        $mockInstanceCurrentState.Ensure = [Ensure]::Present
+                        $mockInstanceCurrentState.ReadOnly = $ReadOnly
+                        $mockInstanceCurrentState.Hidden = $Hidden
+                        $mockInstanceCurrentState.Shared = $Shared
+                        $mockInstanceCurrentState.ShareName = $ShareName
+                        if ($this.ReadOnly -ne $ReadOnly)
+                        {
+                            $mockInstanceCurrentState.Reasons += [Reason]@{
+                                Code   = '{0}:{0}:ReadOnly' -f $this.GetType()
+                                Phrase = ''
                             }
-                            if ($this.Hidden -ne $Hidden)
-                            {
-                                $mockInstanceCurrentState.Reasons += [Reason]@{
-                                    Code = '{0}:{0}:Hidden' -f $this.GetType()
-                                    Phrase = ''
-                                }
-                            }
-
-                            return $mockInstanceCurrentState
                         }
+                        if ($this.Hidden -ne $Hidden)
+                        {
+                            $mockInstanceCurrentState.Reasons += [Reason]@{
+                                Code   = '{0}:{0}:Hidden' -f $this.GetType()
+                                Phrase = ''
+                            }
+                        }
+
+                        return $mockInstanceCurrentState
+                    }
 
                     $script:instanceDesiredState.ReadOnly = $false
                     $script:instanceDesiredState.Hidden = $false
