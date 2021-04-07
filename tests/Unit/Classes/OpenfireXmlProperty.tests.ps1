@@ -35,11 +35,10 @@ InModuleScope $ProjectName {
         }
     }
 
-    # TODO: Set up a test instance of xmppserver-x.x.x.jar and openfire.xml in the test space to reference that instead of the live file.
-    Describe "OpenfireXmlProperty\CRUD functions" {
+    Describe "OpenfireXmlProperty\CRUD functions" -Tag 'Crud' {
         BeforeEach {
             $script:testInstance = [OpenfireXmlProperty] @{
-                OpenfireHome = 'C:\Program Files\Openfire'
+                OpenfireHome = "$($pwd.Path)\tests\Unit\TestOpenfireHome"
                 PropertyName = 'purple.people'
                 Value        = 'eater'
             }
