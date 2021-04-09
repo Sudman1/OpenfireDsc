@@ -1,6 +1,6 @@
 @{
     # Version number of this module.
-    moduleVersion        = '0.0.2'
+    moduleVersion        = '0.1.0'
 
     # ID used to uniquely identify this module
     GUID                 = '5743e617-dfdb-472f-a80d-8dc5fadb8304'
@@ -40,8 +40,8 @@
     DscResourcesToExport = @()
 
     <#
-      Private data to pass to the module specified in RootModule/ModuleToProcess.
-      This may also contain a PSData hashtable with additional module metadata used by PowerShell.
+        Private data to pass to the module specified in RootModule/ModuleToProcess.
+        This may also contain a PSData hashtable with additional module metadata used by PowerShell.
     #>
     PrivateData          = @{
         PSData = @{
