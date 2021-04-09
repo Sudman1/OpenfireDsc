@@ -25,14 +25,14 @@ class OpenfireJiveProperty : OpenfirePropertyBase
     [void] CreateProperty()
     {
         $this.initJiveGlobals()
-        Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'setXMLProperty' -Arguments $this.PropertyName, $this.Value
+        Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'setProperty' -Arguments $this.PropertyName, $this.Value
     }
 
     # Read the value of a property
     [System.String] ReadProperty()
     {
         $this.initJiveGlobals()
-        $currentValue = Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'getXMLProperty' -Arguments $this.PropertyName
+        $currentValue = Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'getProperty' -Arguments $this.PropertyName
         return $currentValue
     }
 
@@ -47,6 +47,6 @@ class OpenfireJiveProperty : OpenfirePropertyBase
     [void] DeleteProperty()
     {
         $this.initJiveGlobals()
-        Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'deleteXMLProperty' -Arguments $this.PropertyName
+        Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'deleteProperty' -Arguments $this.PropertyName
     }
 }
