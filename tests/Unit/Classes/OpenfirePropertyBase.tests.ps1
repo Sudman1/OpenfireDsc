@@ -55,6 +55,11 @@ InModuleScope $ProjectName {
             It 'Should throw calling DeleteProperty()' {
                 { $script:instanceDesiredState.DeleteProperty() } | Should -Throw -ExpectedMessage "'DeleteProperty()' is not implemented. (OB0001)"
             }
+
+            It 'Should throw when Value is required, but not specified' {
+                $script:instanceDesiredState.Value = $null
+                { $script:instanceDesiredState.assertRequiredValueProvided() } | Should -Throw -ExpectedMessage "Property '$($script:instanceDesiredState.PropertyName)' should be present, but a value has not been supplied. (OPB0002)"
+            }
         }
     }
 
