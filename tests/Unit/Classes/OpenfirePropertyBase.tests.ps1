@@ -58,7 +58,7 @@ InModuleScope $ProjectName {
 
             It 'Should throw when Value is required, but not specified' {
                 $script:instanceDesiredState.Value = $null
-                { $script:instanceDesiredState.assertRequiredValueProvided() } | Should -Throw -ExpectedMessage "Property '$($script:instanceDesiredState.PropertyName)' should be present, but a value has not been supplied. (OPB0002)"
+                { $script:instanceDesiredState.assertRequiredValueProvided() } | Should -Throw -ExpectedMessage "A value for property '$($script:instanceDesiredState.PropertyName)' should be present, but has not been supplied. (OPB0002)"
             }
         }
     }
