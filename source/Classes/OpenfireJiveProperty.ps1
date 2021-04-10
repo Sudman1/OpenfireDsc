@@ -21,11 +21,18 @@ class OpenfireJiveProperty : OpenfirePropertyBase
 
     # OVERRIDES
 
+    # Gets the encryption state of the property
+    [System.Boolean] getIsEncrypted()
+    {
+        $this.initJiveGlobals()
+        return Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'isPropertyEncrypted' -Arguments $this.PropertyName
+    }
+
     # Create a new property
     [void] CreateProperty()
     {
         $this.initJiveGlobals()
-        Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'setProperty' -Arguments $this.PropertyName, $this.Value
+        Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'setProperty' -Arguments $this.PropertyName, $this.Value, $this.Encrypted
     }
 
     # Read the value of a property

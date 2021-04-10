@@ -25,6 +25,10 @@ class OpenfirePropertyBase : OpenfireBase
     $Value
 
     [DscProperty()]
+    [System.Boolean]
+    $Encrypted = $false
+
+    [DscProperty()]
     [Ensure]
     $Ensure = 'Present'
 
@@ -72,6 +76,9 @@ class OpenfirePropertyBase : OpenfireBase
 
         # Get the value
         $currentValue = $this.ReadProperty()
+
+        # Get encryption
+        $currentState.Encrypted = $this.getIsEncrypted()
 
         if ([System.String]::IsNullOrWhiteSpace($currentValue))
         {
@@ -137,6 +144,13 @@ class OpenfirePropertyBase : OpenfireBase
         $this.assertRequiredValueProvided()
 
         return ([OpenfireBase] $this).Test()
+    }
+
+    # Override in child classes
+    [void] getIsEncrypted()
+    {
+        throw ($this.localizedData.NotImplemented -f "getIsEncrypted()")
+
     }
 
     # Override in child classes
