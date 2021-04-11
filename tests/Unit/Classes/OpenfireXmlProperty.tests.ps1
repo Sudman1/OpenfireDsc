@@ -46,7 +46,8 @@ InModuleScope $ProjectName {
             Context $context {
                 BeforeEach {
                     $script:instanceDesiredState = [OpenfireXmlProperty] @{
-                        OpenfireHome = "$($pwd.Path)\tests\Unit\TestOpenfireHome"
+                        # OpenfireHome = "$($pwd.Path)\tests\Unit\TestOpenfireHome"
+                        OpenfireHome = 'C:\Program Files\Openfire'
                         PropertyName = 'purple.people'
                         Value        = 'eater'
                         Encrypted    = $contexts[$context]

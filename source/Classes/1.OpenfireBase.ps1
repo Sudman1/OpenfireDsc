@@ -76,19 +76,26 @@ class OpenfireBase
 
     [java.lang.Class] LoadJavaClass([System.String] $FullClassName)
     {
-        if ($null -eq $this.classloader)
+        $loadedAssembly = [System.Reflection.TypeInfo]::GetType($FullClassName)
+
+        if (-not $loadedAssembly)
         {
-            # Set the classloader based on the OpenfireHome variable
-            $openfireJarPath = Get-Item "$($this.OpenfireHome)\lib\xmppserver-*.jar" | Select-Object -First 1
-            $jarFileObj = [java.io.File]::new($openfireJarPath)
-            $url = [java.net.URL]::new($jarFileObj.toURI().toURL())
-            $urlArray = [java.net.URL[]]::new(1)
-            $urlArray[0] = $url
-            $currentCl = [java.lang.Thread]::currentThread().getContextClassLoader()
-            $this.classloader = [java.net.URLClassloader]::newInstance($urlArray, $currentCl)
+            if ($null -eq $this.classloader)
+            {
+                # Set the classloader based on the OpenfireHome variable
+                $openfireJarPath = Get-Item "$($this.OpenfireHome)\lib\xmppserver-*.jar" | Select-Object -First 1
+                $jarFileObj = [java.io.File]::new($openfireJarPath)
+                $url = [java.net.URL]::new($jarFileObj.toURI().toURL())
+                $urlArray = [java.net.URL[]]::new(1)
+                $urlArray[0] = $url
+                $currentCl = [java.lang.Thread]::currentThread().getContextClassLoader()
+                $this.classloader = [java.net.URLClassloader]::newInstance($urlArray, $currentCl)
+            }
+
+            $loadedAssembly = $this.classloader.loadClass($FullClassName)
         }
 
-        return $this.classloader.loadClass($FullClassName)
+        return $loadedAssembly
     }
 
     [OpenfireBase] Get()
@@ -141,7 +148,7 @@ class OpenfireBase
             CurrentValues     = $currentState
             DesiredValues     = $desiredState
             Properties        = $desiredState.Keys
-            ExcludeProperties = @()
+            ExcludeProperties = @('mockValue','methodInvocations')
             IncludeValue      = $true
         }
 

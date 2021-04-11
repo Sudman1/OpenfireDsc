@@ -80,7 +80,7 @@ class OpenfirePropertyBase : OpenfireBase
         # Get encryption
         $currentState.Encrypted = $this.getIsEncrypted()
 
-        if ([System.String]::IsNullOrWhiteSpace($currentValue))
+        if ($null -eq $currentValue)
         {
             $currentState.Value = $this.Value
             $currentState.Ensure = 'Absent'
