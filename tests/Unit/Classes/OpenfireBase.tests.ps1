@@ -7,6 +7,9 @@ $ProjectName = (Get-ChildItem $ProjectPath\*\*.psd1 | Where-Object {
 Import-Module $ProjectName
 
 InModuleScope $ProjectName {
+
+    $mockOpenfireHome = Resolve-Path -Path "$PSScriptRoot\..\..\TestOpenfireHome"
+
     Describe OpenfireBase {
         Context 'OpenfireBase\Constructors' {
             It 'Should not throw an exception when instantiated' {
@@ -29,7 +32,7 @@ InModuleScope $ProjectName {
 
     Describe 'OpenfireBase\Testing Get Method' -Tag 'Get' {
         BeforeAll {
-            $script:mockOpenfireHome = 'C:\Program Files\Openfire'
+            $script:mockOpenfireHome = "$($mockOpenfireHome)"
             $script:mockConfigFileName = 'openfire.xml'
         }
 
@@ -49,7 +52,7 @@ InModuleScope $ProjectName {
 
     Describe "OpenfireBase\Testing Test Method" -Tag 'Test' {
         BeforeAll {
-            $script:mockOpenfireHome = 'C:\Program Files\Openfire'
+            $script:mockOpenfireHome = "$($mockOpenfireHome)"
             $script:mockConfigFileName = 'openfire.xml'
         }
 
@@ -66,7 +69,7 @@ InModuleScope $ProjectName {
 
     Describe "OpenfireBase\Testing Set Method" -Tag 'Set' {
         BeforeAll {
-            $script:mockOpenfireHome = 'C:\Program Files\Openfire'
+            $script:mockOpenfireHome = "$($mockOpenfireHome)"
             $script:mockConfigFileName = 'openfire.xml'
         }
 
@@ -83,7 +86,7 @@ InModuleScope $ProjectName {
 
     Describe "OpenfireBase\Classloading" {
         BeforeAll {
-            $script:mockOpenfireHome = 'C:\Program Files\Openfire'
+            $script:mockOpenfireHome = "$($mockOpenfireHome)"
             $script:mockConfigFileName = 'openfire.xml'
         }
 

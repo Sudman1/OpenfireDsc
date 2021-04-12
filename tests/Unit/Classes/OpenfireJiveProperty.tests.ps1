@@ -15,6 +15,8 @@ Import-Module $ProjectName
 
 InModuleScope $ProjectName {
 
+    $mockOpenfireHome = Resolve-Path -Path "$PSScriptRoot\..\..\TestOpenfireHome"
+
     Describe OpenfireJiveProperty {
         Context 'Constructors' {
             It 'Should not throw an exception when instantiated' {
@@ -39,7 +41,7 @@ InModuleScope $ProjectName {
     Describe "OpenfireJiveProperty\CRUD functions" -Tag 'Crud' {
         BeforeEach {
             $script:testInstance = [OpenfireJiveProperty] @{
-                OpenfireHome = 'C:\Program Files\Openfire'
+                OpenfireHome = "$($mockOpenfireHome)"
                 PropertyName = 'purple.people'
                 Value        = 'eater'
                 Encrypted    = $true
@@ -72,7 +74,7 @@ InModuleScope $ProjectName {
     Describe "OpenfireJiveProperty\Get Method" -Tag 'Get' {
         BeforeEach {
             $script:instanceDesiredState = [OpenfireJiveProperty] @{
-                OpenfireHome = 'C:\Program Files\Openfire'
+                OpenfireHome = "$($mockOpenfireHome)"
                 PropertyName = 'purple.people'
                 Value        = 'eater'
                 Ensure       = 'Present'
@@ -162,7 +164,7 @@ InModuleScope $ProjectName {
     Describe "OpenfireJiveProperty\Test Method" -Tag 'Test' {
         BeforeEach {
             $script:instanceDesiredState = [OpenfireJiveProperty] @{
-                OpenfireHome = 'C:\Program Files\Openfire'
+                OpenfireHome = "$($mockOpenfireHome)"
                 PropertyName = 'purple.people'
                 Value        = 'eater'
                 Ensure       = 'Present'
@@ -252,7 +254,7 @@ InModuleScope $ProjectName {
     Describe "OpenfireJiveProperty\Set Method" -Tag 'Set' {
         BeforeEach {
             $script:instanceDesiredState = [OpenfireJiveProperty] @{
-                OpenfireHome = 'C:\Program Files\Openfire'
+                OpenfireHome = "$($mockOpenfireHome)"
                 PropertyName = 'purple.people'
                 Value        = 'eater'
                 Ensure       = 'Present'

@@ -14,6 +14,9 @@ $ProjectName = (Get-ChildItem $ProjectPath\*\*.psd1 | Where-Object {
 Import-Module $ProjectName
 
 InModuleScope $ProjectName {
+
+    $mockOpenfireHome = Resolve-Path -Path "$PSScriptRoot\..\..\TestOpenfireHome"
+
     Describe OpenfirePropertyBase {
         Context 'OpenfirePropertyBase\Constructors' {
             It 'Should not throw an exception when instantiated' {
@@ -29,7 +32,7 @@ InModuleScope $ProjectName {
         Context 'OpenfirePropertyBase\Type creation' {
             BeforeEach {
                 $script:instanceDesiredState = [OpenfirePropertyBase] @{
-                    OpenfireHome = 'C:\Program Files\Openfire'
+                    OpenfireHome = "$($mockOpenfireHome)"
                     PropertyName = 'purple.people'
                     Value        = 'eater'
                     Ensure       = 'Present'
@@ -98,7 +101,7 @@ InModuleScope $ProjectName {
     Describe 'OpenfirePropertyBase\Testing Get Method' -Tag 'Get' {
         BeforeEach {
             $script:instanceDesiredState = [OpenfirePropertyBase] @{
-                OpenfireHome = 'C:\Program Files\Openfire'
+                OpenfireHome = "$($mockOpenfireHome)"
                 PropertyName = 'purple.people'
                 Value        = 'eater'
                 Ensure       = 'Present'
@@ -121,7 +124,7 @@ InModuleScope $ProjectName {
     Describe "OpenfirePropertyBase\Testing Test Method" -Tag 'Test' {
         BeforeEach {
             $script:instanceDesiredState = [OpenfirePropertyBase] @{
-                OpenfireHome   = 'C:\Program Files\Openfire'
+                OpenfireHome   = "$($mockOpenfireHome)"
                 ConfigFileName = 'openfire.xml'
                 PropertyName   = 'purple.people'
                 Value          = 'eater'
@@ -138,7 +141,7 @@ InModuleScope $ProjectName {
 
         BeforeEach {
             $script:instanceDesiredState = [OpenfirePropertyBase] @{
-                OpenfireHome = 'C:\Program Files\Openfire'
+                OpenfireHome = "$($mockOpenfireHome)"
                 PropertyName = 'purple.people'
                 Value        = 'eater'
                 Ensure       = 'Present'

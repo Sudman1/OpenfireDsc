@@ -8,10 +8,12 @@ Import-Module $ProjectName
 
 InModuleScope $ProjectName {
 
+    $mockOpenfireHome = Resolve-Path -Path "$PSScriptRoot\..\..\TestOpenfireHome"
+
     Describe 'Helper function Invoke-StaticJavaMethod' {
         BeforeAll {
             # Get an object against which to call methods
-            $openfireJarPath = "C:\Program Files\Openfire\lib\xmppserver-4.6.2.jar"
+            $openfireJarPath = "$($mockOpenfireHome)\lib\xmppserver-4.6.2.jar"
             $jarFileObj = [java.io.File]::new($openfireJarPath)
             $url = [java.net.URL]::new($jarFileObj.toURI().toURL())
             $urlArray = [java.net.URL[]]::new(1)

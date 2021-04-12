@@ -15,6 +15,8 @@ Import-Module $ProjectName
 
 InModuleScope $ProjectName {
 
+    $mockOpenfireHome = Resolve-Path -Path "$PSScriptRoot\..\..\TestOpenfireHome"
+
     Describe OpenfireXmlProperty {
         Context 'Constructors' {
             It 'Should not throw an exception when instantiated' {
@@ -39,7 +41,7 @@ InModuleScope $ProjectName {
     Describe "OpenfireXmlProperty\CRUD functions" -Tag 'Crud' {
         BeforeEach {
             $script:testInstance = [OpenfireXmlProperty] @{
-                OpenfireHome = 'C:\Program Files\Openfire'
+                OpenfireHome = "$($mockOpenfireHome)"
                 PropertyName = 'purple.people'
                 Value        = 'eater'
             }
@@ -71,7 +73,7 @@ InModuleScope $ProjectName {
     Describe "OpenfireXmlProperty\Get Method" -Tag 'Get' {
         BeforeEach {
             $script:instanceDesiredState = [OpenfireXmlProperty] @{
-                OpenfireHome = 'C:\Program Files\Openfire'
+                OpenfireHome = "$($mockOpenfireHome)"
                 PropertyName = 'purple.people'
                 Value        = 'eater'
                 Ensure       = 'Present'
@@ -161,7 +163,7 @@ InModuleScope $ProjectName {
     Describe "OpenfireXmlProperty\Test Method" -Tag 'Test' {
         BeforeEach {
             $script:instanceDesiredState = [OpenfireXmlProperty] @{
-                OpenfireHome = 'C:\Program Files\Openfire'
+                OpenfireHome = "$($mockOpenfireHome)"
                 PropertyName = 'purple.people'
                 Value        = 'eater'
                 Ensure       = 'Present'
@@ -251,7 +253,7 @@ InModuleScope $ProjectName {
     Describe "OpenfireXmlProperty\Set Method" -Tag 'Set' {
         BeforeEach {
             $script:instanceDesiredState = [OpenfireXmlProperty] @{
-                OpenfireHome = 'C:\Program Files\Openfire'
+                OpenfireHome = "$($mockOpenfireHome)"
                 PropertyName = 'purple.people'
                 Value        = 'eater'
                 Ensure       = 'Present'
