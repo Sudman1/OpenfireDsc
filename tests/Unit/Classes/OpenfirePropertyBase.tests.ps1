@@ -40,19 +40,51 @@ InModuleScope $ProjectName {
                 $script:instanceDesiredState.GetType().Name | Should -Be 'OpenfirePropertyBase'
             }
 
+            It 'Should throw calling getIsEncrypted()' {
+                { $script:instanceDesiredState.getIsEncrypted() } | Should -Throw -ExpectedMessage "'getIsEncrypted()' is not implemented. (OB0001)"
+            }
+
             It 'Should throw calling CreateProperty()' {
+                # Mock the getIsEncrypted() method
+                $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name getIsEncrypted -Value {
+                    Write-Verbose "Mock for getIsEncrypted() called."
+                    [void] $this.methodInvocations.Add('getIsEncrypted')
+                    return $false
+                } -Force
+
                 { $script:instanceDesiredState.CreateProperty() } | Should -Throw -ExpectedMessage "'CreateProperty()' is not implemented. (OB0001)"
             }
 
             It 'Should throw calling ReadProperty()' {
+                # Mock the getIsEncrypted() method
+                $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name getIsEncrypted -Value {
+                    Write-Verbose "Mock for getIsEncrypted() called."
+                    [void] $this.methodInvocations.Add('getIsEncrypted')
+                    return $false
+                } -Force
+
                 { $script:instanceDesiredState.ReadProperty() } | Should -Throw -ExpectedMessage "'ReadProperty()' is not implemented. (OB0001)"
             }
 
             It 'Should throw calling UpdateProperty()' {
+                # Mock the getIsEncrypted() method
+                $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name getIsEncrypted -Value {
+                    Write-Verbose "Mock for getIsEncrypted() called."
+                    [void] $this.methodInvocations.Add('getIsEncrypted')
+                    return $false
+                } -Force
+
                 { $script:instanceDesiredState.UpdateProperty() } | Should -Throw -ExpectedMessage "'UpdateProperty()' is not implemented. (OB0001)"
             }
 
             It 'Should throw calling DeleteProperty()' {
+                # Mock the getIsEncrypted() method
+                $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name getIsEncrypted -Value {
+                    Write-Verbose "Mock for getIsEncrypted() called."
+                    [void] $this.methodInvocations.Add('getIsEncrypted')
+                    return $false
+                } -Force
+
                 { $script:instanceDesiredState.DeleteProperty() } | Should -Throw -ExpectedMessage "'DeleteProperty()' is not implemented. (OB0001)"
             }
 
@@ -71,6 +103,13 @@ InModuleScope $ProjectName {
                 Value        = 'eater'
                 Ensure       = 'Present'
             }
+
+            # Mock the getIsEncrypted() method
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name getIsEncrypted -Value {
+                Write-Verbose "Mock for getIsEncrypted() called."
+                [void] $this.methodInvocations.Add('getIsEncrypted')
+                return $false
+            } -Force
         }
 
         It 'Should throw' {
@@ -106,9 +145,15 @@ InModuleScope $ProjectName {
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name DeleteProperty -Value {
                 Write-Verbose "Mock value for DeleteProperty() called."
             } -Force
+
+            # Mock the getIsEncrypted() method
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name getIsEncrypted -Value {
+                Write-Verbose "Mock for getIsEncrypted() called."
+                return $false
+            } -Force
         }
 
-        It 'Should throw' {
+        It 'Should not throw' {
             { $script:instanceDesiredState.Test() } | Should -Not -Throw
         }
     }
@@ -140,9 +185,15 @@ InModuleScope $ProjectName {
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name DeleteProperty -Value {
                 Write-Verbose "Mock value for DeleteProperty() called."
             } -Force
+
+            # Mock the getIsEncrypted() method
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name getIsEncrypted -Value {
+                Write-Verbose "Mock for getIsEncrypted() called."
+                return $false
+            } -Force
         }
 
-        It 'Should throw' {
+        It 'Should not throw' {
             { $script:instanceDesiredState.Set() } | Should -Not -Throw
         }
     }

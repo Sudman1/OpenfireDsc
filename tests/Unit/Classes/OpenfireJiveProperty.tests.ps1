@@ -45,20 +45,24 @@ InModuleScope $ProjectName {
             }
         }
 
-        It 'Adds a new XML property value' {
+        It 'Adds a new Jive property value' {
             $script:testInstance.CreateProperty()
         }
 
-        It 'Gets an XML Property Value' {
+        It 'Should return $true when asking if the value is encrypted' {
+            $script:testInstance.getIsEncrypted() | Should -BeTrue
+        }
+
+        It 'Gets an Jive Property Value' {
             $script:testInstance.ReadProperty() | Should -Be $script:testInstance.Value
         }
 
-        It 'Modifies an existing XML property value' {
+        It 'Modifies an existing Jive property value' {
             { $script:testInstance.UpdateProperty() } | Should -Not -Throw
             $script:testInstance.ReadProperty() | Should -Be $script:testInstance.Value
         }
 
-        It 'Deletes an existing XML property value' {
+        It 'Deletes an existing Jive property value' {
             { $script:testInstance.DeleteProperty() } | Should -Not -Throw
             $script:testInstance.ReadProperty() | Should -BeNullOrEmpty
         }
@@ -102,6 +106,13 @@ InModuleScope $ProjectName {
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name UpdateProperty -Value {
                 Write-Verbose "Mock for UpdateProperty() called."
                 [void] $this.methodInvocations.Add('UpdateProperty')
+            } -Force
+
+            # Mock the getIsEncrypted() method
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name getIsEncrypted -Value {
+                Write-Verbose "Mock for getIsEncrypted() called."
+                [void] $this.methodInvocations.Add('getIsEncrypted')
+                return $false
             } -Force
         }
 
@@ -186,6 +197,13 @@ InModuleScope $ProjectName {
                 Write-Verbose "Mock for UpdateProperty() called."
                 [void] $this.methodInvocations.Add('UpdateProperty')
             } -Force
+
+            # Mock the getIsEncrypted() method
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name getIsEncrypted -Value {
+                Write-Verbose "Mock for getIsEncrypted() called."
+                [void] $this.methodInvocations.Add('getIsEncrypted')
+                return $false
+            } -Force
         }
 
 
@@ -268,6 +286,13 @@ InModuleScope $ProjectName {
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name UpdateProperty -Value {
                 Write-Verbose "Mock for UpdateProperty() called."
                 [void] $this.methodInvocations.Add('UpdateProperty')
+            } -Force
+
+            # Mock the getIsEncrypted() method
+            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name getIsEncrypted -Value {
+                Write-Verbose "Mock for getIsEncrypted() called."
+                [void] $this.methodInvocations.Add('getIsEncrypted')
+                return $false
             } -Force
         }
 
