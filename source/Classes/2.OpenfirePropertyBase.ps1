@@ -25,10 +25,6 @@ class OpenfirePropertyBase : OpenfireBase
     $Value
 
     [DscProperty()]
-    [System.Boolean]
-    $Encrypted = $false
-
-    [DscProperty()]
     [Ensure]
     $Ensure = 'Present'
 
