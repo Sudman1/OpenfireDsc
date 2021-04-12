@@ -1,6 +1,10 @@
 [DscResource()]
 class OpenfireJiveProperty : OpenfirePropertyBase
 {
+    [DscProperty()]
+    [System.Boolean]
+    $Encrypted = $false
+
     # Return an instance representing the current state of the resource.
     [OpenfireJiveProperty] Get()
     {

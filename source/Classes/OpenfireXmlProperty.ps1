@@ -1,6 +1,10 @@
 [DscResource()]
 class OpenfireXmlProperty : OpenfirePropertyBase
 {
+    [DscProperty(NotConfigurable)]
+    [System.Boolean]
+    $Encrypted=$false
+
     # Return an instance representing the current state of the resource.
     [OpenfireXmlProperty] Get()
     {
@@ -32,7 +36,7 @@ class OpenfireXmlProperty : OpenfirePropertyBase
     [void] CreateProperty()
     {
         $this.initJiveGlobals()
-        Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'setXMLProperty' -Arguments $this.PropertyName, $this.Value, $this.Encrypted
+        Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'setXMLProperty' -Arguments $this.PropertyName, $this.Value
     }
 
     # Read the value of a property

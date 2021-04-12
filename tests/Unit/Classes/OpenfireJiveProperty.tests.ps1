@@ -42,6 +42,7 @@ InModuleScope $ProjectName {
                 OpenfireHome = 'C:\Program Files\Openfire'
                 PropertyName = 'purple.people'
                 Value        = 'eater'
+                Encrypted    = $true
             }
         }
 

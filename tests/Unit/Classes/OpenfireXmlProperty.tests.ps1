@@ -42,17 +42,15 @@ InModuleScope $ProjectName {
                 OpenfireHome = 'C:\Program Files\Openfire'
                 PropertyName = 'purple.people'
                 Value        = 'eater'
-                Encrypted    = $true
             }
         }
 
         It 'Adds a new XML property value' {
-            Write-Debug d -Debug
             $script:testInstance.CreateProperty()
         }
 
-        It 'Should return $true when asking if the value is encrypted' {
-            $script:testInstance.getIsEncrypted() | Should -BeTrue
+        It 'Should return $false when asking if the value is encrypted' {
+            $script:testInstance.getIsEncrypted() | Should -BeFalse
         }
 
         It 'Gets an XML Property Value' {
@@ -309,7 +307,6 @@ InModuleScope $ProjectName {
 
                 It 'Should delete the property' {
                     { $script:instanceDesiredState.Set() } | Should -Not -Throw
-                    Write-Debug ($script:instanceDesiredState | ConvertTo-Json)
                     $script:instanceDesiredState.methodInvocations | Should -Contain 'DeleteProperty'
                 }
             }
