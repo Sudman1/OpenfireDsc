@@ -127,34 +127,10 @@ InModuleScope $ProjectName {
                 Value          = 'eater'
                 Ensure         = 'Present'
             }
-
-            # Return the value requested
-            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name ReadProperty -Value {
-                Write-Verbose "Mock value '$($script:instanceDesiredState.Value)' for ReadProperty() called."
-                $script:instanceDesiredState.Value
-            } -Force
-
-            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name UpdateProperty -Value {
-                Write-Verbose "Mock value for CreateProperty() called."
-            } -Force
-
-            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name CreateProperty -Value {
-                Write-Verbose "Mock value for CreateProperty() called."
-            } -Force
-
-            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name DeleteProperty -Value {
-                Write-Verbose "Mock value for DeleteProperty() called."
-            } -Force
-
-            # Mock the getIsEncrypted() method
-            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name getIsEncrypted -Value {
-                Write-Verbose "Mock for getIsEncrypted() called."
-                return $false
-            } -Force
         }
 
-        It 'Should not throw' {
-            { $script:instanceDesiredState.Test() } | Should -Not -Throw
+        It 'Should throw' {
+            { $script:instanceDesiredState.Test() } | Should -Throw
         }
     }
 
@@ -167,34 +143,10 @@ InModuleScope $ProjectName {
                 Value        = 'eater'
                 Ensure       = 'Present'
             }
-
-            # Return the value requested
-            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name ReadProperty -Value {
-                Write-Verbose "Mock value '$($script:instanceDesiredState.Value)' for ReadProperty() called."
-                $script:instanceDesiredState.Value
-            } -Force
-
-            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name UpdateProperty -Value {
-                Write-Verbose "Mock value for CreateProperty() called."
-            } -Force
-
-            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name CreateProperty -Value {
-                Write-Verbose "Mock value for CreateProperty() called."
-            } -Force
-
-            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name DeleteProperty -Value {
-                Write-Verbose "Mock value for DeleteProperty() called."
-            } -Force
-
-            # Mock the getIsEncrypted() method
-            $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name getIsEncrypted -Value {
-                Write-Verbose "Mock for getIsEncrypted() called."
-                return $false
-            } -Force
         }
 
-        It 'Should not throw' {
-            { $script:instanceDesiredState.Set() } | Should -Not -Throw
+        It 'Should throw' {
+            { $script:instanceDesiredState.Set() } | Should -Throw
         }
     }
 }
