@@ -20,7 +20,8 @@ $jiveGlobalsClass = $urlCl.loadClass("org.jivesoftware.util.JiveGlobals")
 $jiveGlobals = $jiveGlobalsClass.newInstance()
 
 # Hinkey Reflection
-function Invoke-StaticJavaMethod {
+function Invoke-StaticJavaMethod
+{
     param (
         [Parameter(Mandatory)]
         [System.Object]
