@@ -25,6 +25,10 @@ class OpenfirePropertyBase : OpenfireBase
     $Value
 
     [DscProperty()]
+    [System.Boolean]
+    $Encrypted=$false
+
+    [DscProperty()]
     [Ensure]
     $Ensure = 'Present'
 
@@ -76,9 +80,9 @@ class OpenfirePropertyBase : OpenfireBase
         # Get encryption
         $currentState.Encrypted = $this.getIsEncrypted()
 
-        if ($currentValue -eq [System.String]::Empty)
+        if ([System.String]::IsNullOrEmpty($currentValue))
         {
-            $currentState.Value = $null
+            $currentState.Value = $this.Value
             $currentState.Ensure = 'Absent'
         }
         else

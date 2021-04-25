@@ -1,5 +1,5 @@
 $script:dscModuleName = 'OpenfireDsc'
-$script:dscResourceFriendlyName = 'OpenfireXmlProperty'
+$script:dscResourceFriendlyName = 'OpenfireJiveProperty'
 $script:dscResourceName = "$($script:dscResourceFriendlyName)"
 
 try
@@ -98,7 +98,7 @@ try
                     $resourceCurrentState.Encrypted | Should -Be $shouldBeData.Encrypted
 
                     # Defaulted properties
-                    $resourceCurrentState.ConfigFileName | Should -Be 'openfire.xml'
+                    $resourceCurrentState.ConfigFileName | Should -Be 'openfire.Jive'
                 }
 
                 It 'Should return $true when Test-DscConfiguration is run' {

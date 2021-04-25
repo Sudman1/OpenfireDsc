@@ -1,10 +1,6 @@
 [DscResource()]
 class OpenfireXmlProperty : OpenfirePropertyBase
 {
-    [DscProperty(NotConfigurable)]
-    [System.Boolean]
-    $Encrypted=$false
-
     # Return an instance representing the current state of the resource.
     [OpenfireXmlProperty] Get()
     {

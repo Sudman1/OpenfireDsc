@@ -144,11 +144,22 @@ class OpenfireBase
             }
         }
 
+        # Remove properties that may have been added to the object (as with the Add-Member cmdlet)
+        foreach ($obj in @($currentState, $desiredState))
+        {
+            @($obj.Keys) | ForEach-Object -Process {
+                # Also remove read properties so that there is no chance to campare those.
+                if ($null -eq ($this.GetType().GetProperty($_)))
+                {
+                    $obj.Remove($_)
+                }
+            }
+        }
+
         $CompareDscParameterState = @{
             CurrentValues     = $currentState
             DesiredValues     = $desiredState
             Properties        = $desiredState.Keys
-            ExcludeProperties = @('mockValue','methodInvocations')
             IncludeValue      = $true
         }
 

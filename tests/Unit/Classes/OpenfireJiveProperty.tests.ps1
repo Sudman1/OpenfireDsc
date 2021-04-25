@@ -44,36 +44,35 @@ InModuleScope $ProjectName {
                 OpenfireHome = "$($mockOpenfireHome)"
                 PropertyName = 'purple.people'
                 Value        = 'eater'
-                Encrypted    = $true
             }
         }
 
-        It 'Adds a new Jive property value' {
+        It 'Adds a new XML property value' {
             $script:testInstance.CreateProperty()
         }
 
-        It 'Should return $true when asking if the value is encrypted' {
-            $script:testInstance.getIsEncrypted() | Should -BeTrue
+        It 'Should return $false when asking if the value is encrypted' {
+            $script:testInstance.getIsEncrypted() | Should -BeFalse
         }
 
-        It 'Gets an Jive Property Value' {
+        It 'Gets an XML Property Value' {
             $script:testInstance.ReadProperty() | Should -Be $script:testInstance.Value
         }
 
-        It 'Modifies an existing Jive property value' {
+        It 'Modifies an existing XML property value' {
             { $script:testInstance.UpdateProperty() } | Should -Not -Throw
             $script:testInstance.ReadProperty() | Should -Be $script:testInstance.Value
         }
 
-        It 'Deletes an existing Jive property value' {
+        It 'Deletes an existing XML property value' {
             { $script:testInstance.DeleteProperty() } | Should -Not -Throw
             $script:testInstance.ReadProperty() | Should -BeNullOrEmpty
         }
     }
 
     Describe "OpenfireJiveProperty\Get Method" -Tag 'Get' {
-        BeforeEach {
-            $script:instanceDesiredState = [OpenfireJiveProperty] @{
+        BeforeAll {
+            $script:instanceDesiredState = [OpenfireJiveProperty]  @{
                 OpenfireHome = "$($mockOpenfireHome)"
                 PropertyName = 'purple.people'
                 Value        = 'eater'
@@ -84,45 +83,51 @@ InModuleScope $ProjectName {
             $script:instanceDesiredState | Add-Member -MemberType NoteProperty -Name methodInvocations -Value ([System.Collections.ArrayList]::new())
 
             # What should the value of the mock actually be?
-            $script:instanceDesiredState | Add-Member -MemberType NoteProperty -Name mockValue -Value ''
+            $script:instanceDesiredState | Add-Member -MemberType NoteProperty -Name mockActualValue -Value ''
+
+            # What should the encryption status of the mock actually be?
+            $script:instanceDesiredState | Add-Member -MemberType NoteProperty -Name mockActualEncrypted -Value $false
 
             # Return the mock value
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name ReadProperty -Value {
                 Write-Verbose "Mock for ReadProperty() called."
                 [void] $this.methodInvocations.Add('ReadProperty')
-                return $this.mockValue
+                return $this.mockActualValue
             } -Force
 
             # Mock the DeleteProperty() method
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name DeleteProperty -Value {
                 Write-Verbose "Mock for DeleteProperty() called."
                 [void] $this.methodInvocations.Add('DeleteProperty')
+                $this.mockActualValue = $null
             } -Force
 
             # Mock the CreateProperty() method
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name CreateProperty -Value {
                 Write-Verbose "Mock for CreateProperty() called."
                 [void] $this.methodInvocations.Add('CreateProperty')
+                $this.mockActualValue = $this.Value
             } -Force
 
             # Mock the UpdateProperty() method
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name UpdateProperty -Value {
                 Write-Verbose "Mock for UpdateProperty() called."
                 [void] $this.methodInvocations.Add('UpdateProperty')
+                $this.mockActualValue = $this.Value
             } -Force
 
             # Mock the getIsEncrypted() method
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name getIsEncrypted -Value {
                 Write-Verbose "Mock for getIsEncrypted() called."
                 [void] $this.methodInvocations.Add('getIsEncrypted')
-                return $false
+                return $this.mockActualEncrypted
             } -Force
         }
 
         Context "OpenfireJiveProperty\Get\When the configuration is absent" {
             BeforeEach {
                 # return an empty value to signify a missing value
-                $script:instanceDesiredState.mockValue = $null
+                $script:instanceDesiredState.mockActualValue = $null
             }
 
             It 'Should return the state as absent' {
@@ -142,7 +147,7 @@ InModuleScope $ProjectName {
         Context "OpenfireJiveProperty\Get\When the configuration is present" {
             BeforeEach {
                 # Return the value requested
-                $script:instanceDesiredState.mockValue = $script:instanceDesiredState.Value
+                $script:instanceDesiredState.mockActualValue = $script:instanceDesiredState.Value
             }
 
             It 'Should return the state as present' {
@@ -163,49 +168,55 @@ InModuleScope $ProjectName {
 
     Describe "OpenfireJiveProperty\Test Method" -Tag 'Test' {
         BeforeEach {
-            $script:instanceDesiredState = [OpenfireJiveProperty] @{
+            $script:instanceDesiredState = [OpenfireJiveProperty]  @{
                 OpenfireHome = "$($mockOpenfireHome)"
                 PropertyName = 'purple.people'
                 Value        = 'eater'
-                Ensure       = 'Present'
+                Ensure = 'Present'
             }
 
             # Track calls to mocked commands
             $script:instanceDesiredState | Add-Member -MemberType NoteProperty -Name methodInvocations -Value ([System.Collections.ArrayList]::new())
 
             # What should the value of the mock actually be?
-            $script:instanceDesiredState | Add-Member -MemberType NoteProperty -Name mockValue -Value ''
+            $script:instanceDesiredState | Add-Member -MemberType NoteProperty -Name mockActualValue -Value ''
+
+            # What should the encryption status of the mock actually be?
+            $script:instanceDesiredState | Add-Member -MemberType NoteProperty -Name mockActualEncrypted -Value $false
 
             # Return the mock value
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name ReadProperty -Value {
                 Write-Verbose "Mock for ReadProperty() called."
                 [void] $this.methodInvocations.Add('ReadProperty')
-                return $this.mockValue
+                return $this.mockActualValue
             } -Force
 
             # Mock the DeleteProperty() method
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name DeleteProperty -Value {
                 Write-Verbose "Mock for DeleteProperty() called."
                 [void] $this.methodInvocations.Add('DeleteProperty')
+                $this.mockActualValue = $null
             } -Force
 
             # Mock the CreateProperty() method
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name CreateProperty -Value {
                 Write-Verbose "Mock for CreateProperty() called."
                 [void] $this.methodInvocations.Add('CreateProperty')
+                $this.mockActualValue = $this.Value
             } -Force
 
             # Mock the UpdateProperty() method
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name UpdateProperty -Value {
                 Write-Verbose "Mock for UpdateProperty() called."
                 [void] $this.methodInvocations.Add('UpdateProperty')
+                $this.mockActualValue = $this.Value
             } -Force
 
             # Mock the getIsEncrypted() method
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name getIsEncrypted -Value {
                 Write-Verbose "Mock for getIsEncrypted() called."
                 [void] $this.methodInvocations.Add('getIsEncrypted')
-                return $false
+                return $this.mockActualEncrypted
             } -Force
         }
 
@@ -216,7 +227,7 @@ InModuleScope $ProjectName {
                 It 'Should return $true' {
                     $script:instanceDesiredState.Ensure = 'Absent'
                     # Return $null
-                    $script:instanceDesiredState.mockValue = $null
+                    $script:instanceDesiredState.mockActualValue = $null
                     $script:instanceDesiredState.Test() | Should -BeTrue
                 }
             }
@@ -225,7 +236,7 @@ InModuleScope $ProjectName {
                 It 'Should return $true' {
                     $script:instanceDesiredState.Ensure = 'Present'
                     # Return the value requested
-                    $script:instanceDesiredState.mockValue = $script:instanceDesiredState.Value
+                    $script:instanceDesiredState.mockActualValue = $script:instanceDesiredState.Value
                     $script:instanceDesiredState.Test() | Should -BeTrue
                 }
             }
@@ -234,7 +245,7 @@ InModuleScope $ProjectName {
         Context 'OpenfireJiveProperty\Test\When the system is not in the desired state' {
             BeforeEach {
                 # return an empty value to signify a missing value
-                $script:instanceDesiredState.mockValue = $null
+                $script:instanceDesiredState.mockActualValue = $null
             }
 
             Context 'OpenfireJiveProperty\Test\When the configuration should be absent' {
@@ -253,88 +264,84 @@ InModuleScope $ProjectName {
 
     Describe "OpenfireJiveProperty\Set Method" -Tag 'Set' {
         BeforeEach {
-            $script:instanceDesiredState = [OpenfireJiveProperty] @{
+            $script:instanceDesiredState = [OpenfireJiveProperty]  @{
                 OpenfireHome = "$($mockOpenfireHome)"
                 PropertyName = 'purple.people'
                 Value        = 'eater'
-                Ensure       = 'Present'
+                Ensure = 'Present'
             }
 
             # Track calls to mocked commands
             $script:instanceDesiredState | Add-Member -MemberType NoteProperty -Name methodInvocations -Value ([System.Collections.ArrayList]::new())
 
             # What should the value of the mock actually be?
-            $script:instanceDesiredState | Add-Member -MemberType NoteProperty -Name mockValue -Value ''
+            $script:instanceDesiredState | Add-Member -MemberType NoteProperty -Name mockActualValue -Value ''
+
+            # What should the encryption status of the mock actually be?
+            $script:instanceDesiredState | Add-Member -MemberType NoteProperty -Name mockActualEncrypted -Value $false
 
             # Return the mock value
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name ReadProperty -Value {
                 Write-Verbose "Mock for ReadProperty() called."
                 [void] $this.methodInvocations.Add('ReadProperty')
-                return $this.mockValue
+                return $this.mockActualValue
             } -Force
 
             # Mock the DeleteProperty() method
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name DeleteProperty -Value {
                 Write-Verbose "Mock for DeleteProperty() called."
                 [void] $this.methodInvocations.Add('DeleteProperty')
+                $this.mockActualValue = $null
             } -Force
 
             # Mock the CreateProperty() method
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name CreateProperty -Value {
                 Write-Verbose "Mock for CreateProperty() called."
                 [void] $this.methodInvocations.Add('CreateProperty')
+                $this.mockActualValue = $this.Value
             } -Force
 
             # Mock the UpdateProperty() method
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name UpdateProperty -Value {
                 Write-Verbose "Mock for UpdateProperty() called."
                 [void] $this.methodInvocations.Add('UpdateProperty')
+                $this.mockActualValue = $this.Value
             } -Force
 
             # Mock the getIsEncrypted() method
             $script:instanceDesiredState | Add-Member -MemberType ScriptMethod -Name getIsEncrypted -Value {
                 Write-Verbose "Mock for getIsEncrypted() called."
                 [void] $this.methodInvocations.Add('getIsEncrypted')
-                return $false
+                return $this.mockActualEncrypted
             } -Force
         }
 
         Context 'When the system is not in the desired state' {
 
             Context 'When the configuration should be absent' {
-                BeforeEach {
+                It 'Should delete the property' {
                     $script:instanceDesiredState.Ensure = 'Absent'
                     $script:instanceDesiredState.Value = $null
-                    $script:instanceDesiredState.mockValue = 'value exists'
-                }
-
-                It 'Should delete the property' {
+                    $script:instanceDesiredState.mockActualValue = 'value exists'
                     { $script:instanceDesiredState.Set() } | Should -Not -Throw
-                    Write-Debug ($script:instanceDesiredState | ConvertTo-Json)
                     $script:instanceDesiredState.methodInvocations | Should -Contain 'DeleteProperty'
                 }
             }
 
             Context 'When the configuration should be present' {
-                BeforeEach {
-                    $script:instanceDesiredState.Ensure = 'Present'
-                    $script:instanceDesiredState.mockValue = $null
-                }
-
                 It 'Should create the property' {
+                    $script:instanceDesiredState.Ensure = 'Present'
+                    $script:instanceDesiredState.mockActualValue = $null
                     { $script:instanceDesiredState.Set() } | Should -Not -Throw
                     $script:instanceDesiredState.methodInvocations | Should -Contain 'CreateProperty'
                 }
             }
 
             Context 'When the configuration is present but has the wrong properties' {
-                BeforeAll {
+                It 'Should update the property' {
                     $script:instanceDesiredState.Ensure = 'Present'
                     # return an dummy value to signify an incorrect value
-                    $script:instanceDesiredState.mockValue = 'dummy'
-                }
-
-                It 'Should update the property' {
+                    $script:instanceDesiredState.mockActualValue = 'dummy'
                     { $script:instanceDesiredState.Set() } | Should -Not -Throw
                     $script:instanceDesiredState.methodInvocations | Should -Contain 'UpdateProperty'
                 }
