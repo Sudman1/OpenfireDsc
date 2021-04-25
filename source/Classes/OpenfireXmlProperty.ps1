@@ -19,13 +19,43 @@ class OpenfireXmlProperty : OpenfirePropertyBase
         return ([OpenfirePropertyBase] $this).Test()
     }
 
+    [bool] $currentlyEncrypted = $false
+
+    [System.String] getCurrentValue()
+    {
+        [xml] $xml = Get-Content -Encoding UTF8 -Path ('{0}\conf\{1}' -f $this.OpenfireHome, $this.ConfigFileName)
+        $data = Invoke-Expression ('$xml.jive.{0}' -f $this.PropertyName)
+        $this.currentlyEncrypted = $data.encrypted -eq 'true'
+
+        # We can use straight powershell if the value is unencrypted, giving us some performance benefits.
+        if ($this.currentlyEncrypted)
+        {
+            $this.initJiveGlobals()
+            $currentValue = Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'getXMLProperty' -Arguments $this.PropertyName
+        }
+        else
+        {
+            if ($data -is [System.Xml.XmlElement])
+            {
+                $currentValue = $data.InnerText
+            }
+            else
+            {
+                $currentValue = $data
+            }
+        }
+
+        return $currentValue
+    }
+
     # OVERRIDES
 
     # Gets the encryption state of the property
     [System.Boolean] getIsEncrypted()
     {
-        $this.initJiveGlobals()
-        return Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'isXMLPropertyEncrypted' -Arguments $this.PropertyName
+        # Ensure the currentlyEncrypted field is populated
+        [void] $this.getCurrentValue()
+        return $this.currentlyEncrypted
     }
 
     # Create a new property
@@ -38,9 +68,7 @@ class OpenfireXmlProperty : OpenfirePropertyBase
     # Read the value of a property
     [System.String] ReadProperty()
     {
-        $this.initJiveGlobals()
-        $currentValue = Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'getXMLProperty' -Arguments $this.PropertyName
-        return $currentValue
+        return $this.getCurrentValue()
     }
 
     # Update and existing property
