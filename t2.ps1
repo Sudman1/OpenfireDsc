@@ -5,6 +5,29 @@ Import-Module -Name $script:dscResourceCommonModulePath -verbose
 
 $mockOpenfireHome = Resolve-Path -Path "tests\TestOpenfireHome"
 
+$o = [OpenfireXmlProperty]  @{
+    OpenfireHome = "$($mockOpenfireHome)"
+    PropertyName = 'purple.people'
+    Value        = 'eater'
+    Ensure = 'present'
+    Encrypted = $true
+}
+
+$o.Get()
+
+$o.Test()
+
+$o.Set()
+
+$o.Get()
+
+$o.Test()
+
+# $o.DeleteProperty()
+
+# $o.Get()
+
+<#
 $script:instanceDesiredState = [OpenfireXmlProperty]  @{
     OpenfireHome = "$($mockOpenfireHome)"
     PropertyName = 'purple.people'
@@ -81,3 +104,4 @@ $script:instanceDesiredState.Get() | Ft -a
 
 "Test:"
 $script:instanceDesiredState.Test()
+#>

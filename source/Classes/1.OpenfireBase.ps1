@@ -160,6 +160,7 @@ class OpenfireBase
             CurrentValues     = $currentState
             DesiredValues     = $desiredState
             Properties        = $desiredState.Keys
+            ExcludeProperties = 'currentlyEncrypted'
             IncludeValue      = $true
         }
 

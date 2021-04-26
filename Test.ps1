@@ -1,4 +1,5 @@
-$dlls = Get-ChildItem .\source\ikvm8\lib\ -Filter "*.dll"
+# $dlls = Get-ChildItem .\source\ikvm8\lib\ -Filter "*.dll"
+$dlls = Get-ChildItem  ..\..\..\Downloads\ikvm.windward.8.5.0.3\lib -Filter "*.dll"
 
 foreach ($file in $dlls)
 {
@@ -66,7 +67,8 @@ function Invoke-StaticJavaMethod
 }
 
 # Set Home Directory
-$jiveGlobals.GetType().getmember('setHomeDirectory').Invoke($jiveGlobals, @("C:\Program Files\Openfire"))
+# $jiveGlobals.GetType().getmember('setHomeDirectory').Invoke($jiveGlobals, @("C:\Program Files\Openfire"))
+$jiveGlobals.GetType().getmember('setHomeDirectory').Invoke($jiveGlobals, @("C:\Users\james\Documents\code\openfiredsc\tests\TestOpenfireHome"))
 $jiveGlobals.GetType().getmember('getHomeDirectory').Invoke($jiveGlobals, $null)
 
 # Set Config File
@@ -82,3 +84,9 @@ $SchemaManager = [org.jivesoftware.database.SchemaManager]::new()
 $schemaCheckStatus = $SchemaManager.checkOpenfireSchema($con)
 
 "Schema check was successful: $schemaCheckStatus"
+
+
+Invoke-StaticJavaMethod -InputObject $jiveGlobals -MethodName 'getXMLProperty' -Arguments fqdn
+Invoke-StaticJavaMethod -InputObject $jiveGlobals -MethodName 'getXMLProperty' -Arguments connectionProvider.className
+Invoke-StaticJavaMethod -InputObject $jiveGlobals -MethodName 'getXMLProperty' -Arguments database.defaultProvider.username
+Invoke-StaticJavaMethod -InputObject $jiveGlobals -MethodName 'getXMLProperty' -Arguments purple.people

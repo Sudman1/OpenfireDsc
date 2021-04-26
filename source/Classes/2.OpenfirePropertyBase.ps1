@@ -37,6 +37,7 @@ class OpenfirePropertyBase : OpenfireBase
     [void] initJiveGlobals()
     {
         $this.jiveGlobals = $this.LoadJavaClass("org.jivesoftware.util.JiveGlobals").newInstance()
+
         Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'setHomeDirectory' -Arguments $this.OpenfireHome
 
         Write-Verbose "Home Directory: $(Invoke-StaticJavaMethod -InputObject $this.jiveGlobals -MethodName 'getHomeDirectory')"
@@ -83,6 +84,7 @@ class OpenfirePropertyBase : OpenfireBase
         if ([System.String]::IsNullOrEmpty($currentValue))
         {
             $currentState.Value = $this.Value
+            $currentState.Encrypted = $this.Encrypted
             $currentState.Ensure = 'Absent'
         }
         else
